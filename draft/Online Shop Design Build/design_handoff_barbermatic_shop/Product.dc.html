@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0d0b09;color:#e8e1d6;font-family:'Jost',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#e8e1d6;text-decoration:none}a:hover{color:#c9a876}
+::selection{background:#c9a876;color:#0d0b09}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<header style="position:sticky;top:0;z-index:50;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:22px 48px;background:rgba(13,11,9,0.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(232,225,214,0.08)">
+  <a href="Home.dc.html" style="justify-self:start">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:0.32em;color:#ece5da">BARBERMATIC</div>
+    <div style="font-size:8px;letter-spacing:0.42em;color:#c9a876;margin-top:2px">HANDMADE IN IRELAND</div>
+  </a>
+  <nav style="display:flex;gap:36px;font-size:12px;letter-spacing:0.18em">
+    <a href="Product.dc.html">SHOP</a><a href="Product.dc.html">ONE-OF-ONE</a><a href="Home.dc.html#materials">MATERIALS</a><a href="Home.dc.html#maker">THE MAKER</a><a href="Home.dc.html#journal">JOURNAL</a>
+  </nav>
+  <div style="justify-self:end;display:flex;gap:22px;align-items:center;color:#e8e1d6">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+    <div style="position:relative">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 8h12l-1 13H7L6 8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg>
+      <div style="position:absolute;top:-7px;right:-9px;width:15px;height:15px;border-radius:50%;background:#c9a876;color:#0d0b09;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:500">{{ bagCount }}</div>
+    </div>
+  </div>
+</header>
+
+<main style="display:grid;grid-template-columns:96px minmax(0,1.15fr) minmax(360px,0.85fr);gap:40px;padding:36px 64px 72px;max-width:1440px;margin:0 auto;box-sizing:border-box">
+  <div style="grid-column:1/-1">
+    <a href="Home.dc.html" style="font-size:12px;letter-spacing:0.1em;color:#b8b0a2">← Back to shop</a>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <sc-for list="{{ thumbs }}" as="t" hint-placeholder-count="4">
+      <button onClick="{{ t.select }}" style="width:84px;height:84px;padding:0;background:#14100c;border:1px solid {{ t.borderColor }};cursor:pointer;overflow:hidden">
+        <sc-if value="{{ t.img }}" hint-placeholder-val="{{ true }}"><img src="{{ t.img }}" alt="{{ t.label }}" style="width:100%;height:100%;object-fit:cover;display:block"></sc-if>
+        <sc-if value="{{ t.noImg }}"><div style="width:100%;height:100%;background:repeating-linear-gradient(45deg,#181209 0 8px,#20180c 8px 16px);display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:8px;color:#6e5a3a;text-align:center;padding:4px;box-sizing:border-box">{{ t.label }}</div></sc-if>
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="position:relative;background:#100d0a;border:1px solid rgba(232,225,214,0.06);min-height:640px;overflow:hidden">
+    <sc-if value="{{ mainIsPhoto }}" hint-placeholder-val="{{ true }}">
+      <img src="uploads/barbermatic_hero_image.png" alt="Amboyna burl shaving brush, silvertip badger knot, on dark stone" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+    </sc-if>
+    <sc-if value="{{ mainIsPlaceholder }}">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,#181209 0 14px,#20180c 14px 28px);display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:12px;color:#6e5a3a">{{ mainLabel }}</div>
+    </sc-if>
+    <div style="position:absolute;right:20px;bottom:20px;width:38px;height:38px;border:1px solid rgba(232,225,214,0.3);display:flex;align-items:center;justify-content:center;color:#ece5da">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line><line x1="8" y1="11" x2="14" y2="11"></line><line x1="11" y1="8" x2="11" y2="14"></line></svg>
+    </div>
+  </div>
+
+  <div style="padding-top:8px">
+    <div style="font-size:11px;letter-spacing:0.26em;color:#c9a876;margin-bottom:16px">{{ statusLabel }}</div>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:44px;line-height:1.12;margin:0 0 18px;color:#ece5da;text-wrap:balance">Amboyna Burl Shaving Brush</h1>
+    <div style="font-size:20px;font-weight:300;letter-spacing:0.04em;color:#ece5da;margin-bottom:26px">€125.00</div>
+    <p style="font-size:14px;font-weight:300;line-height:1.85;color:#b8b0a2;margin:0 0 32px;max-width:420px">A one-of-one shaving brush turned from exceptional Amboyna burl. Rich figure, deep chatoyance and a comfortable, sculpted form. Fitted with a premium 24mm silvertip badger knot.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px 24px;margin-bottom:34px">
+      <sc-for list="{{ traits }}" as="tr" hint-placeholder-count="4">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <div style="width:36px;height:36px;flex:none;border:1px solid rgba(201,168,118,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#c9a876;font-size:12px;font-family:'Cormorant Garamond',serif">{{ tr.glyph }}</div>
+          <div>
+            <div style="font-size:10px;letter-spacing:0.2em;color:#ece5da;margin-bottom:5px">{{ tr.title }}</div>
+            <div style="font-size:11.5px;font-weight:300;line-height:1.6;color:#8f8778">{{ tr.body }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:0.06em;color:#e8e1d6;margin-bottom:20px">
+      <span style="width:8px;height:8px;border-radius:50%;background:{{ dotColor }}"></span>{{ availabilityLine }}
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:18px">
+      <button onClick="{{ addToBag }}" disabled="{{ soldOut }}" style="flex:1;padding:18px;background:{{ ctaBg }};color:#171310;border:none;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:0.24em;cursor:pointer;transition:background 0.3s" style-hover="background:#d9bc8e">{{ ctaLabel }}</button>
+      <button style="width:56px;border:1px solid rgba(232,225,214,0.2);background:transparent;color:#ece5da;cursor:pointer;font-size:15px">⌗</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;font-size:11.5px;font-weight:300;color:#8f8778;margin-bottom:34px">
+      <span style="color:#c9a876">⚿</span> Secure checkout <span style="color:#4c463c">•</span> Worldwide Shipping
+    </div>
+
+    <div style="border-top:1px solid rgba(232,225,214,0.1)">
+      <sc-for list="{{ accordions }}" as="ac" hint-placeholder-count="5">
+        <div style="border-bottom:1px solid rgba(232,225,214,0.1)">
+          <button onClick="{{ ac.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;background:transparent;border:none;padding:18px 2px;cursor:pointer;color:#ece5da;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:0.2em">
+            {{ ac.title }}<span style="color:#c9a876;font-size:12px">{{ ac.chevron }}</span>
+          </button>
+          <sc-if value="{{ ac.open }}">
+            <div style="padding:0 2px 20px;font-size:13px;font-weight:300;line-height:1.8;color:#b8b0a2;max-width:420px">{{ ac.body }}</div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</main>
+
+<section style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px;background:#0d0b09;border-top:1px solid rgba(232,225,214,0.06)">
+  <div style="aspect-ratio:1;background:repeating-linear-gradient(45deg,#181209 0 12px,#20180c 12px 24px);display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:10px;color:#6e5a3a">knot detail macro</div>
+  <div style="aspect-ratio:1;background:repeating-linear-gradient(45deg,#241708 0 12px,#2d1d0b 12px 24px);display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:10px;color:#7a5f38">burl grain macro</div>
+  <div style="aspect-ratio:1;background:repeating-linear-gradient(45deg,#181209 0 12px,#20180c 12px 24px);display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:10px;color:#6e5a3a">maker's mark on base</div>
+  <div style="display:flex;flex-direction:column;justify-content:center;padding:40px 44px;background:#120f0c">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:34px;color:#c9a876;line-height:1;margin-bottom:14px">“</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;line-height:1.4;color:#ece5da;font-style:italic">The wood determines the character. I simply reveal it.</div>
+    <div style="font-size:10px;letter-spacing:0.22em;color:#8f8778;margin-top:18px">— THE MAKER</div>
+  </div>
+</section>
+
+<section style="display:grid;grid-template-columns:240px 1fr;gap:56px;padding:64px 64px 72px;background:#0d0b09;border-top:1px solid rgba(232,225,214,0.06);max-width:1440px;margin:0 auto;box-sizing:border-box">
+  <div>
+    <div style="font-size:11px;letter-spacing:0.24em;color:#ece5da;margin-bottom:26px">INCLUDED</div>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <sc-for list="{{ included }}" as="inc" hint-placeholder-count="4">
+        <div style="display:flex;gap:14px;align-items:center;font-size:12.5px;font-weight:300;color:#b8b0a2">
+          <span style="width:30px;height:30px;flex:none;border:1px solid rgba(232,225,214,0.15);display:flex;align-items:center;justify-content:center;color:#c9a876;font-size:12px">{{ inc.glyph }}</span>{{ inc.label }}
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <div style="font-size:11px;letter-spacing:0.24em;color:#ece5da">YOU MAY ALSO LIKE</div>
+      <div style="display:flex;gap:8px"><span style="width:34px;height:34px;border:1px solid rgba(232,225,214,0.15);display:flex;align-items:center;justify-content:center;color:#6e6759">←</span><span style="width:34px;height:34px;border:1px solid rgba(232,225,214,0.35);display:flex;align-items:center;justify-content:center;color:#ece5da">→</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <sc-for list="{{ related }}" as="r" hint-placeholder-count="4">
+        <a href="Product.dc.html" style="display:block;background:#120f0c;border:1px solid rgba(232,225,214,0.06);transition:border-color 0.3s" style-hover="border-color:rgba(201,168,118,0.4)">
+          <div style="aspect-ratio:1;background:repeating-linear-gradient(45deg,#14100c 0 12px,#1a1510 12px 24px);display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:9px;color:#5d5344;text-align:center;padding:12px">{{ r.placeholder }}</div>
+          <div style="padding:14px 16px 18px">
+            <div style="font-size:12px;color:#ece5da;line-height:1.5">{{ r.name }}<br><span style="font-weight:300;color:#8f8778">{{ r.knot }}</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px">
+              <span style="font-size:12.5px;color:#ece5da">{{ r.price }}</span>
+              <span style="font-size:9px;letter-spacing:0.14em;color:#c9a876">{{ r.status }}</span>
+            </div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section style="display:grid;grid-template-columns:repeat(5,1fr);background:#0d0b09;border-top:1px solid rgba(232,225,214,0.08);border-bottom:1px solid rgba(232,225,214,0.08)">
+  <sc-for list="{{ values }}" as="v" hint-placeholder-count="5">
+    <div style="display:flex;align-items:center;gap:14px;padding:30px 28px;border-right:1px solid rgba(232,225,214,0.06)">
+      <span style="color:#c9a876;font-family:'Cormorant Garamond',serif;font-size:24px;line-height:1">{{ v.glyph }}</span>
+      <div style="font-size:10px;letter-spacing:0.16em;line-height:1.7;color:#b8b0a2">{{ v.line1 }}<br>{{ v.line2 }}</div>
+    </div>
+  </sc-for>
+</section>
+
+<footer style="background:#0d0b09;padding:64px 80px 0">
+  <div style="display:grid;grid-template-columns:1.2fr 0.8fr 0.8fr 0.8fr 1.2fr;gap:48px;padding-bottom:56px">
+    <div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:0.3em;color:#ece5da">BARBERMATIC</div>
+      <div style="font-size:8px;letter-spacing:0.4em;color:#c9a876;margin:4px 0 20px">HANDMADE IN IRELAND</div>
+      <p style="font-size:12px;font-weight:300;line-height:1.8;color:#8f8778;margin:0;max-width:230px">Distinctive grooming tools and functional art for men who value craftsmanship, character and quality that lasts.</p>
+      <div style="display:flex;gap:16px;margin-top:22px;color:#b8b0a2;font-size:11px;letter-spacing:0.14em"><a href="Home.dc.html#journal">IG</a><a href="Home.dc.html#journal">FB</a><a href="Home.dc.html#journal">MAIL</a></div>
+    </div>
+    <div>
+      <div style="font-size:11px;letter-spacing:0.22em;color:#ece5da;margin-bottom:18px">SHOP</div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;font-weight:300"><a href="Product.dc.html" style="color:#8f8778">All Products</a><a href="Product.dc.html" style="color:#8f8778">Shaving Brushes</a><a href="Product.dc.html" style="color:#8f8778">Safety Razors</a><a href="Product.dc.html" style="color:#8f8778">Writing Instruments</a><a href="Product.dc.html" style="color:#8f8778">Personal Objects</a><a href="Product.dc.html" style="color:#8f8778">Leather &amp; Tweed</a><a href="Product.dc.html" style="color:#8f8778">Gift Guide</a></div>
+    </div>
+    <div>
+      <div style="font-size:11px;letter-spacing:0.22em;color:#ece5da;margin-bottom:18px">INFORMATION</div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;font-weight:300"><a href="Home.dc.html#maker" style="color:#8f8778">About the Maker</a><a href="Home.dc.html#materials" style="color:#8f8778">Materials</a><a href="Home.dc.html#journal" style="color:#8f8778">Care Guide</a><a href="Home.dc.html#journal" style="color:#8f8778">Shipping &amp; Returns</a><a href="Home.dc.html#journal" style="color:#8f8778">FAQ</a><a href="Home.dc.html#journal" style="color:#8f8778">Contact</a></div>
+    </div>
+    <div>
+      <div style="font-size:11px;letter-spacing:0.22em;color:#ece5da;margin-bottom:18px">JOURNAL</div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;font-weight:300"><a href="Home.dc.html#journal" style="color:#8f8778">Stories</a><a href="Home.dc.html#journal" style="color:#8f8778">Materials</a><a href="Home.dc.html#journal" style="color:#8f8778">Rituals</a><a href="Home.dc.html#journal" style="color:#8f8778">Behind the Bench</a></div>
+    </div>
+    <div style="border:1px solid rgba(232,225,214,0.1);padding:26px 28px;height:fit-content;box-sizing:border-box;min-width:0">
+      <div style="font-size:11px;letter-spacing:0.22em;color:#ece5da;margin-bottom:12px">STAY CONNECTED</div>
+      <p style="font-size:12px;font-weight:300;line-height:1.7;color:#8f8778;margin:0 0 18px">Stories, new pieces and workshop notes. No noise.</p>
+      <div style="display:flex;border:1px solid rgba(232,225,214,0.15)">
+        <input placeholder="Enter your email" style="flex:1;background:transparent;border:none;outline:none;padding:12px 14px;color:#ece5da;font-family:'Jost',sans-serif;font-size:12px">
+        <button style="background:transparent;border:none;border-left:1px solid rgba(232,225,214,0.15);color:#c9a876;padding:0 16px;cursor:pointer;font-size:14px">→</button>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;padding:22px 0;border-top:1px solid rgba(232,225,214,0.08);font-size:11px;font-weight:300;color:#6e6759">
+    <span>© 2026 Barbermatic. All rights reserved.</span>
+    <div style="display:flex;gap:28px"><a href="Home.dc.html#journal" style="color:#6e6759">Privacy Policy</a><a href="Home.dc.html#journal" style="color:#6e6759">Terms &amp; Conditions</a></div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;availability&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;One available&quot;,&quot;Sold out&quot;],&quot;default&quot;:&quot;One available&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Product state&quot;}}">
+class Component extends DCLogic {
+  state = { bag: 0, activeThumb: 0, open: { DETAILS: false, 'KNOT & PERFORMANCE': false, 'MATERIAL & PROVENANCE': false, 'SHIPPING & RETURNS': false, 'CARE GUIDE': false } };
+  renderVals() {
+    const soldOut = (this.props.availability ?? 'One available') === 'Sold out';
+    const thumbDefs = [
+      { img: 'uploads/barbermatic_hero_image.png', label: 'full brush' },
+      { noImg: true, label: 'handle detail' },
+      { noImg: true, label: 'grain macro' },
+      { noImg: true, label: 'base + mark' },
+    ];
+    const active = thumbDefs[this.state.activeThumb] || thumbDefs[0];
+    const bodies = {
+      'DETAILS': 'Overall height approx. 105mm. Handle turned from stabilised Amboyna burl, finished to a deep gloss. The piece shown is the piece you will receive.',
+      'KNOT & PERFORMANCE': '24mm silvertip badger knot, hand-set. Soft, dense tips with excellent backbone and water retention for both face and bowl lathering.',
+      'MATERIAL & PROVENANCE': 'Amboyna burl is among the rarest and most figured of all burl woods. Natural variation in grain, colour and character is unique to this piece.',
+      'SHIPPING & RETURNS': 'Dispatched from County Cork within 2–3 working days. Tracked worldwide shipping. Returns accepted within 14 days in original condition.',
+      'CARE GUIDE': 'Rinse thoroughly after use, shake out excess water and hang or stand to dry away from direct heat. Avoid soaking the handle.',
+    };
+    return {
+      bagCount: this.state.bag,
+      soldOut,
+      statusLabel: soldOut ? 'SOLD' : 'ONE-OF-ONE',
+      dotColor: soldOut ? '#6e6759' : '#c9a876',
+      availabilityLine: soldOut ? 'This piece has found its owner' : 'Only 1 available',
+      ctaBg: soldOut ? '#4c463c' : '#c9a876',
+      ctaLabel: soldOut ? 'SOLD OUT' : 'ADD TO BAG',
+      addToBag: () => { if (!soldOut && this.state.bag < 1) this.setState({ bag: 1 }); },
+      mainIsPhoto: !!active.img,
+      mainIsPlaceholder: !!active.noImg,
+      mainLabel: (active.label || '') + ' photo',
+      thumbs: thumbDefs.map((t, i) => ({
+        ...t,
+        select: () => this.setState({ activeThumb: i }),
+        borderColor: i === this.state.activeThumb ? 'rgba(201,168,118,0.8)' : 'rgba(232,225,214,0.1)',
+      })),
+      traits: [
+        { glyph: '1/1', title: 'ONE OF ONE', body: 'This exact piece will not be repeated.' },
+        { glyph: '✳', title: 'MADE BY HAND', body: 'Shaped, finished and assembled in Ireland.' },
+        { glyph: '♦', title: 'BUILT TO ENDURE', body: 'Made to be used, made to last.' },
+        { glyph: '❧', title: 'NATURAL MATERIALS', body: 'Grain, colour and character unique to this piece.' },
+      ],
+      accordions: Object.keys(bodies).map(title => ({
+        title, body: bodies[title], open: this.state.open[title],
+        chevron: this.state.open[title] ? '⌃' : '⌄',
+        toggle: () => this.setState(s => ({ open: { ...s.open, [title]: !s.open[title] } })),
+      })),
+      included: [
+        { glyph: '▭', label: 'Presentation box' },
+        { glyph: 'B', label: 'Care card' },
+        { glyph: '✎', label: 'Brush care guide' },
+        { glyph: '◫', label: 'Protective travel sleeve' },
+      ],
+      related: [
+        { name: 'Thuya Burl Shaving Brush', knot: '24mm Silvertip', price: '€110.00', status: 'ONE-OF-ONE', placeholder: 'thuya brush photo' },
+        { name: 'Ironwood Shaving Brush', knot: '24mm Finest', price: '€105.00', status: '1 AVAILABLE', placeholder: 'ironwood brush photo' },
+        { name: 'Sunshine Stone Shaving Brush', knot: '24mm Silvertip', price: '€140.00', status: 'ONE-OF-ONE', placeholder: 'sunshine stone brush photo' },
+        { name: 'Pinecone Shaving Brush', knot: '24mm Finest', price: '€95.00', status: '1 AVAILABLE', placeholder: 'pinecone brush photo' },
+      ],
+      values: [
+        { glyph: '✳', line1: 'MADE BY HAND', line2: 'IN IRELAND' },
+        { glyph: '§', line1: 'SMALL NUMBERS', line2: 'NEVER MASS PRODUCED' },
+        { glyph: '◯', line1: 'ONE-OF-ONE', line2: 'PIECES' },
+        { glyph: '♦', line1: 'BUILT TO BE USED', line2: 'BUILT TO LAST' },
+        { glyph: '❦', line1: 'MEANINGFUL', line2: 'GIFTS' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
