@@ -1,0 +1,55 @@
+name: Build & Deploy to GitHub Pages
+
+# Deploys the static storefront. When Shopify secrets are present, the catalog
+# is prerendered from the Storefront API first; otherwise the seeded
+# data/products.json is used. A Shopify webhook can trigger this via
+# repository_dispatch (type: shopify-sync) to rebuild when products change.
+
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [shopify-sync]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Prerender catalog from Shopify (skips if not configured)
+        env:
+          SHOPIFY_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE_DOMAIN }}
+          SHOPIFY_STOREFRONT_TOKEN: ${{ secrets.SHOPIFY_STOREFRONT_TOKEN }}
+          SHOPIFY_API_VERSION: ${{ vars.SHOPIFY_API_VERSION }}
+          PRODUCT_TAG: ${{ vars.PRODUCT_TAG }}
+        run: node scripts/build-catalog.mjs
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
