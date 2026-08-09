@@ -4,3 +4,6 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+
+# Internal runbook — kept local, not tracked
+SHOPIFY_CONNECTION_PLAN.md
