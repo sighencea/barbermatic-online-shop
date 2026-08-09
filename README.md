@@ -37,6 +37,7 @@ Storefront token (secret)                  loads static HTML + data/products.jso
 | Path | Purpose |
 |------|---------|
 | `index.html` | Homepage. Product grid is prerendered between `BM:PRODUCTS` markers. |
+| `shop.html` + `js/shop.js` | Category listing; filters products by `?category=` (no param = Discover All). |
 | `product.html` + `js/product.js` | Product detail; renders any product by `?slug=`. |
 | `cart.html` + `js/cart.js` | Bag; builds the Shopify checkout permalink. |
 | `thank-you.html`, `404.html` | Post-checkout return; not-found. |
@@ -86,6 +87,17 @@ Do these once, at the API-connection stage.
    guarantee for one-of-one pieces).
 2. Add the tag **`barbermatic`** to every product that belongs on this shop.
    Your existing generic products stay out automatically.
+2a. **Category** — add exactly one category tag so the product lands on the
+   right menu page. The menu maps to these slugs:
+   - `category:razors` — RAZORS (safety razors, Gillette/cartridge razors, …)
+   - `category:shaving-brushes` — SHAVING BRUSHES
+   - `category:writing-instruments` — WRITING INSTRUMENTS
+   - `category:accessories` — ACCESSORIES
+
+   Use Shopify's **Product Type** for the specific sub-type ("Safety Razor" vs
+   "Gillette Razor") — both still show under RAZORS via the one `category:razors`
+   tag. DISCOVER ALL shows everything regardless of category. The build reads the
+   `category:*` tag into each product's `category` field (`scripts/build-catalog.mjs`).
 3. Add editorial copy as **metafields** (so new products need no code change).
    Create these definitions (Settings → Custom data → Products), namespace
    `barbermatic`:

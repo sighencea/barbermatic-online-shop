@@ -113,11 +113,18 @@ function mapProduct(node) {
   const knotSpec = mfValue(node, "knot_spec") || "";
   const available = node.totalInventory != null ? node.totalInventory : (variant?.quantityAvailable ?? 0);
 
+  // Category comes from a single `category:<slug>` tag (e.g. category:razors).
+  // Decides which shop page the product appears on. Product Type stays the
+  // specific sub-type (e.g. "Safety Razor" vs "Gillette Razor") for display.
+  const catTag = (node.tags || []).map((t) => /^category:(.+)$/i.exec(t)).find(Boolean);
+  const category = catTag ? catTag[1].trim().toLowerCase() : "";
+
   return {
     slug: node.handle,
     title: node.title,
     material: node.title.replace(/shaving brush/i, "").trim().toUpperCase(),
     type: node.productType || "Shaving Brush",
+    category,
     price: `${sym}${amount.toFixed(2)}`,
     priceAmount: amount,
     currency: price.currencyCode,

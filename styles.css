@@ -127,10 +127,11 @@ button { font-family: var(--sans); }
 
 .main-nav {
   display: flex;
-  gap: 36px;
+  gap: 26px;
   font-size: 12px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
 }
+.main-nav a { white-space: nowrap; }
 
 .header-utils {
   justify-self: end;
@@ -364,7 +365,7 @@ button { font-family: var(--sans); }
    Footer
    ========================================================================== */
 .site-footer { background: var(--bg); padding: 64px 80px 0; }
-.footer-grid { display: grid; grid-template-columns: 1.2fr 0.8fr 0.8fr 0.8fr 1.2fr; gap: 48px; padding-bottom: 56px; }
+.footer-grid { display: grid; grid-template-columns: 1.4fr 0.9fr 0.9fr 1.4fr; gap: 48px; padding-bottom: 56px; }
 .footer-brand__name { font-family: var(--serif); font-size: 20px; letter-spacing: 0.3em; color: var(--text); }
 .footer-brand__logo { display: block; width: 96px; height: auto; filter: invert(0.92); margin-bottom: 14px; }
 .footer-brand__sub { font-size: 8px; letter-spacing: 0.4em; color: var(--accent); margin: 4px 0 20px; }
@@ -502,6 +503,21 @@ button { font-family: var(--sans); }
 .cart-summary__total { color: var(--text); }
 
 /* ==========================================================================
+   Shop / category listing page
+   ========================================================================== */
+.shop { padding: 64px 80px 88px; max-width: var(--maxw); margin: 0 auto; }
+.shop-head { margin-bottom: 40px; }
+.shop-title {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(34px, 4vw, 52px); line-height: 1.1;
+  margin: 12px 0 10px; color: var(--text);
+}
+.shop-count { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin: 0; }
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.shop-empty { padding: 24px 0 40px; display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
+.shop-empty p { font-size: 15px; font-weight: 300; line-height: 1.85; color: var(--text-body); max-width: 460px; margin: 0; }
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 @media (max-width: 1100px) {
@@ -530,6 +546,8 @@ button { font-family: var(--sans); }
   .value-cell { border-bottom: 1px solid var(--hairline-soft); }
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .site-footer { padding: 48px 20px 0; }
+  .shop { padding: 48px 20px 64px; }
+  .shop-grid { grid-template-columns: 1fr 1fr; }
   .pdp { grid-template-columns: 1fr; padding: 24px 20px 48px; }
   .thumb-rail { flex-direction: row; flex-wrap: wrap; order: 3; }
   .pdp-lower { grid-template-columns: 1fr; gap: 32px; padding: 48px 20px; }

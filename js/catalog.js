@@ -53,5 +53,25 @@
     }
   };
 
+  /* Category pages. `slug` matches the product `category` field (from the
+     Shopify `category:*` tag). Order here is the nav order. */
+  Catalog.CATEGORIES = [
+    { slug: "razors", label: "Razors" },
+    { slug: "shaving-brushes", label: "Shaving Brushes" },
+    { slug: "writing-instruments", label: "Writing Instruments" },
+    { slug: "accessories", label: "Accessories" }
+  ];
+
+  Catalog.categoryLabel = function (slug) {
+    var c = Catalog.CATEGORIES.find(function (c) { return c.slug === slug; });
+    return c ? c.label : null;
+  };
+
+  Catalog.byCategory = async function (slug) {
+    var products = await Catalog.all();
+    if (!slug) return products;
+    return products.filter(function (p) { return p.category === slug; });
+  };
+
   global.Catalog = Catalog;
 })(window);
