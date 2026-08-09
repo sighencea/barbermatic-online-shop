@@ -1,0 +1,159 @@
+{
+  "_comment": "SEEDED CATALOG. This file is the single source the storefront reads. At the API-connection stage, scripts/build-catalog.mjs overwrites it in CI by fetching Shopify products tagged 'barbermatic'. Shape here == shape the build produces. 'variantId' is empty until Shopify is connected; empty variantId => Add to Bag is disabled with a 'coming soon' note. Editorial copy for non-Amboyna pieces is placeholder to be replaced by Shopify metafields.",
+  "generatedAt": null,
+  "source": "seed",
+  "products": [
+    {
+      "slug": "ironwood-shaving-brush",
+      "title": "Ironwood Shaving Brush",
+      "material": "IRONWOOD",
+      "type": "Shaving Brush",
+      "price": "€105.00",
+      "priceAmount": 105.0,
+      "currency": "EUR",
+      "knot": "24mm Knot",
+      "knotSpec": "24mm Finest",
+      "available": 1,
+      "oneOfOne": true,
+      "variantId": "",
+      "images": [],
+      "placeholders": ["ironwood brush photo", "handle detail", "grain macro", "base + mark"],
+      "description": "A one-of-one shaving brush turned from dense, richly grained ironwood. Weighty in the hand with a warm, close grain and a comfortable, sculpted form. Fitted with a premium 24mm finest badger knot.",
+      "traits": [
+        { "glyph": "1/1", "title": "ONE OF ONE", "body": "This exact piece will not be repeated." },
+        { "glyph": "✳", "title": "MADE BY HAND", "body": "Shaped, finished and assembled in Ireland." },
+        { "glyph": "♦", "title": "BUILT TO ENDURE", "body": "Made to be used, made to last." },
+        { "glyph": "❧", "title": "NATURAL MATERIALS", "body": "Grain, colour and character unique to this piece." }
+      ],
+      "accordions": [
+        { "title": "DETAILS", "body": "Overall height approx. 105mm. Handle turned from ironwood, finished to a deep gloss. The piece shown is the piece you will receive." },
+        { "title": "KNOT & PERFORMANCE", "body": "24mm finest badger knot, hand-set. Soft tips with good backbone and water retention for both face and bowl lathering." },
+        { "title": "MATERIAL & PROVENANCE", "body": "Ironwood is among the densest and most durable of timbers. Natural variation in grain and colour is unique to this piece." },
+        { "title": "SHIPPING & RETURNS", "body": "Dispatched from County Cork within 2–3 working days. Tracked worldwide shipping. Returns accepted within 14 days in original condition." },
+        { "title": "CARE GUIDE", "body": "Rinse thoroughly after use, shake out excess water and hang or stand to dry away from direct heat. Avoid soaking the handle." }
+      ]
+    },
+    {
+      "slug": "amboyna-burl-shaving-brush",
+      "title": "Amboyna Burl Shaving Brush",
+      "material": "AMBOYNA BURL",
+      "type": "Shaving Brush",
+      "price": "€125.00",
+      "priceAmount": 125.0,
+      "currency": "EUR",
+      "knot": "24mm Knot",
+      "knotSpec": "24mm Silvertip",
+      "available": 1,
+      "oneOfOne": true,
+      "variantId": "",
+      "images": [
+        { "src": "assets/barbermatic_hero_image.png", "alt": "Amboyna burl shaving brush, silvertip badger knot, on dark stone" }
+      ],
+      "placeholders": ["handle detail", "grain macro", "base + mark"],
+      "description": "A one-of-one shaving brush turned from exceptional Amboyna burl. Rich figure, deep chatoyance and a comfortable, sculpted form. Fitted with a premium 24mm silvertip badger knot.",
+      "traits": [
+        { "glyph": "1/1", "title": "ONE OF ONE", "body": "This exact piece will not be repeated." },
+        { "glyph": "✳", "title": "MADE BY HAND", "body": "Shaped, finished and assembled in Ireland." },
+        { "glyph": "♦", "title": "BUILT TO ENDURE", "body": "Made to be used, made to last." },
+        { "glyph": "❧", "title": "NATURAL MATERIALS", "body": "Grain, colour and character unique to this piece." }
+      ],
+      "accordions": [
+        { "title": "DETAILS", "body": "Overall height approx. 105mm. Handle turned from stabilised Amboyna burl, finished to a deep gloss. The piece shown is the piece you will receive." },
+        { "title": "KNOT & PERFORMANCE", "body": "24mm silvertip badger knot, hand-set. Soft, dense tips with excellent backbone and water retention for both face and bowl lathering." },
+        { "title": "MATERIAL & PROVENANCE", "body": "Amboyna burl is among the rarest and most figured of all burl woods. Natural variation in grain, colour and character is unique to this piece." },
+        { "title": "SHIPPING & RETURNS", "body": "Dispatched from County Cork within 2–3 working days. Tracked worldwide shipping. Returns accepted within 14 days in original condition." },
+        { "title": "CARE GUIDE", "body": "Rinse thoroughly after use, shake out excess water and hang or stand to dry away from direct heat. Avoid soaking the handle." }
+      ]
+    },
+    {
+      "slug": "thuya-burl-shaving-brush",
+      "title": "Thuya Burl Shaving Brush",
+      "material": "THUYA BURL",
+      "type": "Shaving Brush",
+      "price": "€110.00",
+      "priceAmount": 110.0,
+      "currency": "EUR",
+      "knot": "24mm Knot",
+      "knotSpec": "24mm Silvertip",
+      "available": 1,
+      "oneOfOne": true,
+      "variantId": "",
+      "images": [],
+      "placeholders": ["thuya burl brush photo", "handle detail", "grain macro", "base + mark"],
+      "description": "A one-of-one shaving brush turned from aromatic Thuya burl. Warm amber tones, tight clustered figure and a comfortable, sculpted form. Fitted with a premium 24mm silvertip badger knot.",
+      "traits": [
+        { "glyph": "1/1", "title": "ONE OF ONE", "body": "This exact piece will not be repeated." },
+        { "glyph": "✳", "title": "MADE BY HAND", "body": "Shaped, finished and assembled in Ireland." },
+        { "glyph": "♦", "title": "BUILT TO ENDURE", "body": "Made to be used, made to last." },
+        { "glyph": "❧", "title": "NATURAL MATERIALS", "body": "Grain, colour and character unique to this piece." }
+      ],
+      "accordions": [
+        { "title": "DETAILS", "body": "Overall height approx. 105mm. Handle turned from stabilised Thuya burl, finished to a deep gloss. The piece shown is the piece you will receive." },
+        { "title": "KNOT & PERFORMANCE", "body": "24mm silvertip badger knot, hand-set. Soft, dense tips with excellent backbone and water retention for both face and bowl lathering." },
+        { "title": "MATERIAL & PROVENANCE", "body": "Thuya burl has been prized since antiquity for its aromatic warmth and dense figure. Natural variation in grain and colour is unique to this piece." },
+        { "title": "SHIPPING & RETURNS", "body": "Dispatched from County Cork within 2–3 working days. Tracked worldwide shipping. Returns accepted within 14 days in original condition." },
+        { "title": "CARE GUIDE", "body": "Rinse thoroughly after use, shake out excess water and hang or stand to dry away from direct heat. Avoid soaking the handle." }
+      ]
+    },
+    {
+      "slug": "sunshine-stone-shaving-brush",
+      "title": "Sunshine Stone Shaving Brush",
+      "material": "SUNSHINE STONE",
+      "type": "Shaving Brush",
+      "price": "€140.00",
+      "priceAmount": 140.0,
+      "currency": "EUR",
+      "knot": "24mm Knot",
+      "knotSpec": "24mm Silvertip",
+      "available": 1,
+      "oneOfOne": true,
+      "variantId": "",
+      "images": [],
+      "placeholders": ["sunshine stone brush photo", "handle detail", "grain macro", "base + mark"],
+      "description": "A one-of-one shaving brush with a striking sunshine-stone handle. Luminous golden figure and a comfortable, sculpted form. Fitted with a premium 24mm silvertip badger knot.",
+      "traits": [
+        { "glyph": "1/1", "title": "ONE OF ONE", "body": "This exact piece will not be repeated." },
+        { "glyph": "✳", "title": "MADE BY HAND", "body": "Shaped, finished and assembled in Ireland." },
+        { "glyph": "♦", "title": "BUILT TO ENDURE", "body": "Made to be used, made to last." },
+        { "glyph": "❧", "title": "NATURAL MATERIALS", "body": "Grain, colour and character unique to this piece." }
+      ],
+      "accordions": [
+        { "title": "DETAILS", "body": "Overall height approx. 105mm. Handle finished to a deep gloss. The piece shown is the piece you will receive." },
+        { "title": "KNOT & PERFORMANCE", "body": "24mm silvertip badger knot, hand-set. Soft, dense tips with excellent backbone and water retention for both face and bowl lathering." },
+        { "title": "MATERIAL & PROVENANCE", "body": "Each sunshine-stone handle carries luminous natural figure unique to this piece." },
+        { "title": "SHIPPING & RETURNS", "body": "Dispatched from County Cork within 2–3 working days. Tracked worldwide shipping. Returns accepted within 14 days in original condition." },
+        { "title": "CARE GUIDE", "body": "Rinse thoroughly after use, shake out excess water and hang or stand to dry away from direct heat. Avoid soaking the handle." }
+      ]
+    },
+    {
+      "slug": "pinecone-shaving-brush",
+      "title": "Pinecone Shaving Brush",
+      "material": "PINECONE",
+      "type": "Shaving Brush",
+      "price": "€95.00",
+      "priceAmount": 95.0,
+      "currency": "EUR",
+      "knot": "24mm Knot",
+      "knotSpec": "24mm Finest",
+      "available": 1,
+      "oneOfOne": true,
+      "variantId": "",
+      "images": [],
+      "placeholders": ["pinecone brush photo", "handle detail", "grain macro", "base + mark"],
+      "description": "A one-of-one shaving brush with a stabilised pinecone handle. Intricate natural mosaic and a comfortable, sculpted form. Fitted with a premium 24mm finest badger knot.",
+      "traits": [
+        { "glyph": "1/1", "title": "ONE OF ONE", "body": "This exact piece will not be repeated." },
+        { "glyph": "✳", "title": "MADE BY HAND", "body": "Shaped, finished and assembled in Ireland." },
+        { "glyph": "♦", "title": "BUILT TO ENDURE", "body": "Made to be used, made to last." },
+        { "glyph": "❧", "title": "NATURAL MATERIALS", "body": "Grain, colour and character unique to this piece." }
+      ],
+      "accordions": [
+        { "title": "DETAILS", "body": "Overall height approx. 105mm. Handle turned from stabilised pinecone, finished to a deep gloss. The piece shown is the piece you will receive." },
+        { "title": "KNOT & PERFORMANCE", "body": "24mm finest badger knot, hand-set. Soft tips with good backbone and water retention for both face and bowl lathering." },
+        { "title": "MATERIAL & PROVENANCE", "body": "Each stabilised pinecone handle carries an intricate natural mosaic unique to this piece." },
+        { "title": "SHIPPING & RETURNS", "body": "Dispatched from County Cork within 2–3 working days. Tracked worldwide shipping. Returns accepted within 14 days in original condition." },
+        { "title": "CARE GUIDE", "body": "Rinse thoroughly after use, shake out excess water and hang or stand to dry away from direct heat. Avoid soaking the handle." }
+      ]
+    }
+  ]
+}
