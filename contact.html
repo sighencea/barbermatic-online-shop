@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Barbermatic — Contact</title>
+<meta name="description" content="Get in touch with Barbermatic — questions, commissions and gifting help. Handcrafted in County Cork, Ireland.">
+<link rel="canonical" href="https://barbermatic.com/contact.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230d0b09'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' fill='%23c9a876' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="js/include.js" defer></script>
+</head>
+<body>
+
+<div data-include="partials/header.html"></div>
+
+<main class="page">
+  <div class="eyebrow" style="margin-bottom:16px">GET IN TOUCH</div>
+  <h1 class="page__title">Contact</h1>
+  <p class="page__lead">Questions about a piece, a commission, or a gift? Send us a note and we'll reply personally. We work from a small workshop in County Cork, Ireland, so allow a day or two.</p>
+
+  <!-- Formspree: replace the form `action` below with your Formspree endpoint
+       (https://formspree.io/f/XXXXXXXX) to enable submissions. Until then, the
+       form is intercepted and shows a short notice instead of submitting. -->
+  <form class="contact-form" action="https://formspree.io/f/your-form-id" method="POST" data-contact>
+    <div>
+      <label for="cf-name">Name</label>
+      <input id="cf-name" name="name" type="text" autocomplete="name" required>
+    </div>
+    <div>
+      <label for="cf-email">Email</label>
+      <input id="cf-email" name="email" type="email" autocomplete="email" required>
+    </div>
+    <div>
+      <label for="cf-subject">Subject</label>
+      <input id="cf-subject" name="subject" type="text">
+    </div>
+    <div>
+      <label for="cf-message">Message</label>
+      <textarea id="cf-message" name="message" required></textarea>
+    </div>
+    <!-- honeypot: bots fill this, humans don't -->
+    <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <button class="btn btn--solid" type="submit">SEND MESSAGE</button>
+    <p class="form-note" data-contact-note hidden>Thanks — the contact form isn't connected yet. In the meantime, please email us at <a href="mailto:hello@barbermatic.com" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px">hello@barbermatic.com</a>.</p>
+  </form>
+
+  <p class="form-note">Prefer email? Reach us directly at <a href="mailto:hello@barbermatic.com" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px">hello@barbermatic.com</a>.</p>
+</main>
+
+<div data-include="partials/footer.html"></div>
+
+<script src="js/site.js"></script>
+</body>
+</html>

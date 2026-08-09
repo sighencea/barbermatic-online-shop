@@ -49,9 +49,48 @@
       form.dataset.bound = "1";
       form.addEventListener("submit", function (e) { e.preventDefault(); });
     });
+    // Contact form: until the Formspree endpoint is set, intercept the submit
+    // and reveal the fallback note instead of posting to the placeholder URL.
+    document.querySelectorAll("[data-contact]").forEach(function (form) {
+      if (form.dataset.bound) return;
+      form.dataset.bound = "1";
+      if ((form.getAttribute("action") || "").indexOf("your-form-id") !== -1) {
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var note = form.querySelector("[data-contact-note]");
+          if (note) note.hidden = false;
+        });
+      }
+    });
   }
+  // Cookie notice. This site sets no non-essential cookies of its own (the bag
+  // uses functional localStorage), so this is an informational, dismissible
+  // notice — not a consent gate. Dismissal is remembered in localStorage.
+  function initCookieNotice() {
+    try { if (localStorage.getItem("bm_cookie_ack")) return; } catch (e) { return; }
+    if (document.querySelector(".cookie-notice")) return;
+    var wrap = document.createElement("div");
+    wrap.className = "cookie-notice";
+    wrap.setAttribute("role", "region");
+    wrap.setAttribute("aria-label", "Cookie notice");
+    var p = document.createElement("p");
+    p.innerHTML = 'We use essential cookies and local storage to run the shop and remember your bag — nothing for tracking or advertising. See our <a href="privacy-policy.html">Privacy Policy</a>.';
+    var btn = document.createElement("button");
+    btn.className = "btn btn--solid";
+    btn.type = "button";
+    btn.textContent = "GOT IT";
+    btn.addEventListener("click", function () {
+      try { localStorage.setItem("bm_cookie_ack", "1"); } catch (e) {}
+      wrap.remove();
+    });
+    wrap.appendChild(p);
+    wrap.appendChild(btn);
+    document.body.appendChild(wrap);
+  }
+
   document.addEventListener("DOMContentLoaded", initChrome);
   document.addEventListener("includes:loaded", initChrome);
+  document.addEventListener("DOMContentLoaded", initCookieNotice);
 
   global.Bag = Bag;
 })(window);

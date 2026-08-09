@@ -525,6 +525,74 @@ button { font-family: var(--sans); }
 .shop-empty p { font-size: 15px; font-weight: 300; line-height: 1.85; color: var(--text-body); max-width: 460px; margin: 0; }
 
 /* ==========================================================================
+   Content pages (care guide, gift guide, FAQ, contact, policies)
+   ========================================================================== */
+.prose { max-width: 640px; }
+.prose > p { font-size: 15px; font-weight: 300; line-height: 1.85; color: var(--text-body); margin: 0 0 20px; }
+.prose h2 { font-family: var(--serif); font-weight: 500; font-size: 26px; line-height: 1.2; color: var(--text); margin: 44px 0 14px; }
+.prose h3 { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text); margin: 30px 0 10px; }
+.prose ul { margin: 0 0 22px; padding-left: 20px; }
+.prose li { font-size: 15px; font-weight: 300; line-height: 1.8; color: var(--text-body); margin-bottom: 9px; }
+.prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.prose strong { color: var(--text); font-weight: 500; }
+
+.draft-note {
+  border: 1px solid var(--accent-border); background: rgba(201,168,118,0.06);
+  padding: 14px 18px; margin: 0 0 32px; max-width: 640px;
+  font-size: 12.5px; font-weight: 300; line-height: 1.7; color: var(--text-body);
+}
+.draft-note strong { color: var(--accent); font-weight: 500; letter-spacing: 0.06em; }
+.updated { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); margin: 0 0 32px; }
+
+/* FAQ — native <details>, no JS */
+.faq { max-width: 680px; border-top: 1px solid var(--hairline-strong); margin-top: 8px; }
+.faq details { border-bottom: 1px solid var(--hairline-strong); }
+.faq summary {
+  cursor: pointer; list-style: none; padding: 18px 2px;
+  display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  font-size: 13px; letter-spacing: 0.03em; color: var(--text);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "⌄"; color: var(--accent); font-size: 13px; }
+.faq details[open] summary::after { content: "⌃"; }
+.faq details > p { font-size: 14px; font-weight: 300; line-height: 1.8; color: var(--text-body); margin: 0 2px 20px; max-width: 600px; }
+.faq details > p a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Contact form (Formspree-ready) */
+.contact-form { max-width: 520px; display: flex; flex-direction: column; gap: 18px; margin-top: 8px; }
+.contact-form label { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 8px; }
+.contact-form input, .contact-form textarea {
+  width: 100%; box-sizing: border-box; background: var(--surface-2);
+  border: 1px solid var(--hairline-strong); color: var(--text);
+  font-family: var(--sans); font-size: 14px; font-weight: 300; padding: 12px 14px; outline: none;
+}
+.contact-form input:focus, .contact-form textarea:focus { border-color: var(--accent-border-strong); }
+.contact-form textarea { min-height: 150px; resize: vertical; }
+.contact-form .btn--solid { width: fit-content; padding: 16px 40px; }
+.form-note { font-size: 12px; font-weight: 300; line-height: 1.7; color: var(--text-muted); margin: 14px 0 0; max-width: 520px; }
+
+/* Gift guide cards */
+.gift-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 8px; max-width: 720px; }
+.gift-card { display: block; background: var(--surface-2); border: 1px solid var(--hairline-soft); padding: 28px 26px; transition: border-color .3s; }
+.gift-card:hover { border-color: var(--accent-border); }
+.gift-card h3 { font-family: var(--serif); font-weight: 500; font-size: 21px; color: var(--text); margin: 0 0 10px; }
+.gift-card p { font-size: 13.5px; font-weight: 300; line-height: 1.7; color: var(--text-body); margin: 0 0 16px; }
+.gift-card span { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+
+/* Cookie notice (injected by js/site.js; dismissal stored in localStorage) */
+.cookie-notice {
+  position: fixed; left: 20px; right: 20px; bottom: 20px; z-index: 60;
+  max-width: 620px; margin: 0 auto;
+  display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+  background: rgba(18,15,12,0.97); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--hairline-strong); padding: 18px 20px;
+  animation: bmFade .5s ease both;
+}
+.cookie-notice p { flex: 1; min-width: 220px; margin: 0; font-size: 12.5px; font-weight: 300; line-height: 1.65; color: var(--text-body); }
+.cookie-notice a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.cookie-notice .btn { flex: none; padding: 12px 26px; }
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 @media (max-width: 1100px) {
@@ -556,6 +624,7 @@ button { font-family: var(--sans); }
   .site-footer { padding: 48px 20px 0; }
   .shop { padding: 48px 20px 64px; }
   .shop-grid { grid-template-columns: 1fr 1fr; }
+  .gift-grid { grid-template-columns: 1fr; }
   .pdp { grid-template-columns: 1fr; padding: 24px 20px 48px; }
   .thumb-rail { flex-direction: row; flex-wrap: wrap; order: 3; }
   .pdp-lower { grid-template-columns: 1fr; gap: 32px; padding: 48px 20px; }
