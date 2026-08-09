@@ -101,7 +101,10 @@ Do these once, at the API-connection stage.
 3. Add editorial copy as **metafields** (so new products need no code change).
    Create these definitions (Settings → Custom data → Products), namespace
    `barbermatic`:
-   - `knot_spec` — single line text (e.g. "24mm Silvertip")
+   - `material` — single line text, the card label (e.g. "AMBOYNA BURL"); falls
+     back to the upper-cased title if unset
+   - `spec` — single line text, the small card spec (e.g. "24mm Silvertip" /
+     "3-Piece" / "Rollerball"); falls back to legacy `knot_spec`, then blank
    - `traits` — JSON: `[{"glyph":"1/1","title":"ONE OF ONE","body":"…"}, …]`
    - `accordions` — JSON: `[{"title":"DETAILS","body":"…"}, …]`
 

@@ -38,9 +38,11 @@ const TOKEN = process.env.SHOPIFY_STOREFRONT_TOKEN || "";
 const API_VERSION = process.env.SHOPIFY_API_VERSION || "2025-01";
 const TAG = process.env.PRODUCT_TAG || "barbermatic";
 
-// Metafield identifiers to read for editorial copy. Adjust to match Shopify.
+// Metafield identifiers to read. Adjust to match Shopify. Namespace: barbermatic.
 const METAFIELDS = [
-  { namespace: "barbermatic", key: "knot_spec" },
+  { namespace: "barbermatic", key: "material" },    // card label, e.g. "AMBOYNA BURL"
+  { namespace: "barbermatic", key: "spec" },        // generic card spec, e.g. "3-Piece" / "Rollerball"
+  { namespace: "barbermatic", key: "knot_spec" },   // legacy brush spec — fallback for `spec`
   { namespace: "barbermatic", key: "traits" },      // JSON: [{glyph,title,body}]
   { namespace: "barbermatic", key: "accordions" },  // JSON: [{title,body}]
 ];
@@ -110,7 +112,13 @@ function mapProduct(node) {
   const sym = toCurrencySymbol(price.currencyCode);
   const variant = node.variants.edges[0]?.node;
   const images = node.images.edges.map((e) => ({ src: e.node.url, alt: e.node.altText || node.title }));
-  const knotSpec = mfValue(node, "knot_spec") || "";
+  // Generic card spec so razors / pens / accessories read naturally. Prefer the
+  // `spec` metafield; fall back to the legacy brush `knot_spec`; else empty
+  // (the card omits the spec cleanly when blank).
+  const spec = mfValue(node, "spec") || mfValue(node, "knot_spec") || "";
+  // Card label. Prefer an explicit `material` metafield; otherwise fall back to
+  // the product title upper-cased.
+  const material = mfValue(node, "material") || node.title.toUpperCase();
   const available = node.totalInventory != null ? node.totalInventory : (variant?.quantityAvailable ?? 0);
 
   // Category comes from a single `category:<slug>` tag (e.g. category:razors).
@@ -122,14 +130,14 @@ function mapProduct(node) {
   return {
     slug: node.handle,
     title: node.title,
-    material: node.title.replace(/shaving brush/i, "").trim().toUpperCase(),
+    material,
     type: node.productType || "Shaving Brush",
     category,
     price: `${sym}${amount.toFixed(2)}`,
     priceAmount: amount,
     currency: price.currencyCode,
-    knot: knotSpec || "24mm Knot",
-    knotSpec: knotSpec,
+    knot: spec,
+    knotSpec: spec,
     available,
     oneOfOne: available <= 1,
     variantId: numericVariantId(variant?.id),
@@ -146,13 +154,16 @@ function cardHtml(p) {
     ? `<img src="${p.images[0].src}" alt="${p.images[0].alt}">`
     : `<div class="ph">${(p.placeholders[0] || "photo")}</div>`;
   const avail = p.available > 0 ? `${p.available} available` : "sold";
+  const meta = p.knot
+    ? `<span>${p.knot}</span><span class="dot"></span><span>${avail}</span>`
+    : `<span>${avail}</span>`;
   return `    <a class="card" href="product.html?slug=${p.slug}">
       <div class="card__media">${media}</div>
       <div class="card__body">
         <div class="card__material">${p.material}</div>
         <div class="card__type">${p.type}</div>
         <div class="card__price">${p.price}</div>
-        <div class="card__meta"><span>${p.knot}</span><span class="dot"></span><span>${avail}</span></div>
+        <div class="card__meta">${meta}</div>
       </div>
     </a>`;
 }

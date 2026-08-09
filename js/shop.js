@@ -35,8 +35,10 @@
     body.appendChild(el("div", "card__price", p.price));
 
     var meta = el("div", "card__meta");
-    meta.appendChild(el("span", null, p.knot));
-    meta.appendChild(el("span", "dot"));
+    if (p.knot) {
+      meta.appendChild(el("span", null, p.knot));
+      meta.appendChild(el("span", "dot"));
+    }
     meta.appendChild(el("span", null, p.available > 0 ? p.available + " available" : "sold"));
     body.appendChild(meta);
 
