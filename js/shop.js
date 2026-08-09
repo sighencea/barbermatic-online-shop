@@ -51,7 +51,7 @@
     var box = el("div", "shop-empty");
     box.appendChild(el("p", null,
       "New " + (label ? label.toLowerCase() : "pieces") +
-      " are being finished in the County Cork workshop. Every piece is one-of-one — check back soon."));
+      " are being finished in the County Cork workshop. Every piece is one of one. Check back soon."));
     var back = el("a", "btn btn--ghost");
     back.href = "shop.html";
     back.textContent = "DISCOVER ALL";
@@ -70,7 +70,7 @@
 
     // Heading reflects the category (or "All Pieces").
     var heading = slug ? (label || "Shop") : "All Pieces";
-    document.title = "Barbermatic — " + heading;
+    document.title = "Barbermatic · " + heading;
     titleEl.textContent = heading;
     eyebrowEl.textContent = slug ? "THE COLLECTION" : "DISCOVER ALL";
 

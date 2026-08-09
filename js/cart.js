@@ -21,7 +21,7 @@
   function renderEmpty(root) {
     root.innerHTML = "";
     var box = el("div", "cart-empty");
-    box.appendChild(el("p", "page__lead", "Your bag is empty. Every piece is one-of-one — when one speaks to you, it is yours alone."));
+    box.appendChild(el("p", "page__lead", "Your bag is empty. Every piece is one of one. When one speaks to you, it is yours alone."));
     var back = el("a", "btn btn--ghost");
     back.href = "index.html#brushes";
     back.textContent = "DISCOVER THE COLLECTION";
@@ -56,7 +56,7 @@
       var nameLink = el("a", "cart-line__name", product.title);
       nameLink.href = "product.html?slug=" + encodeURIComponent(product.slug);
       mid.appendChild(nameLink);
-      mid.appendChild(el("div", "cart-line__type", product.type + " · One-of-one"));
+      mid.appendChild(el("div", "cart-line__type", product.type + " · One of one"));
       var remove = el("button", "cart-line__remove", "Remove");
       remove.type = "button";
       remove.addEventListener("click", function () {

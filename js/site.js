@@ -74,7 +74,7 @@
     wrap.setAttribute("role", "region");
     wrap.setAttribute("aria-label", "Cookie notice");
     var p = document.createElement("p");
-    p.innerHTML = 'We use essential cookies and local storage to run the shop and remember your bag — nothing for tracking or advertising. See our <a href="privacy-policy.html">Privacy Policy</a>.';
+    p.innerHTML = 'We use essential cookies and local storage to run the shop and remember your bag, nothing for tracking or advertising. See our <a href="privacy-policy.html">Privacy Policy</a>.';
     var btn = document.createElement("button");
     btn.className = "btn btn--solid";
     btn.type = "button";

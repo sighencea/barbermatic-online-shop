@@ -74,7 +74,7 @@
     info.innerHTML = "";
     var soldOut = !(product.available > 0);
 
-    info.appendChild(el("div", "eyebrow", soldOut ? "SOLD" : "ONE-OF-ONE"));
+    info.appendChild(el("div", "eyebrow", soldOut ? "SOLD" : "ONE OF ONE"));
     var h1 = el("h1", "pdp__title", product.title);
     info.appendChild(h1);
     info.appendChild(el("div", "pdp__price", product.price));
@@ -192,7 +192,7 @@
         body.appendChild(name);
         var r = el("div", "related-card__row");
         r.appendChild(el("span", "related-card__price", p.price));
-        r.appendChild(el("span", "related-card__status", p.oneOfOne ? "ONE-OF-ONE" : "1 AVAILABLE"));
+        r.appendChild(el("span", "related-card__status", p.oneOfOne ? "ONE OF ONE" : "1 AVAILABLE"));
         body.appendChild(r);
         a.appendChild(body);
         grid.appendChild(a);
@@ -220,7 +220,7 @@
       var product = all.find(function (p) { return p.slug === slug; }) || all[0];
       if (!product) { renderNotFound(); return; }
 
-      document.title = "Barbermatic — " + product.title;
+      document.title = "Barbermatic · " + product.title;
       var metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc && product.description) metaDesc.setAttribute("content", product.description);
 
