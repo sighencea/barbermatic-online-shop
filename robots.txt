@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /cart.html
+Disallow: /thank-you.html
+
+Sitemap: https://barbermatic.com/sitemap.xml
