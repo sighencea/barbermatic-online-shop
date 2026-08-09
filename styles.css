@@ -376,7 +376,9 @@ button { font-family: var(--sans); }
 .footer-brand__logo { display: block; width: 96px; height: auto; filter: invert(0.92); margin-bottom: 14px; }
 .footer-brand__sub { font-size: 8px; letter-spacing: 0.4em; color: var(--accent); margin: 4px 0 20px; }
 .footer-brand__desc { font-size: 12px; font-weight: 300; line-height: 1.8; color: var(--text-muted); margin: 0; max-width: 230px; }
-.footer-social { display: flex; gap: 16px; margin-top: 22px; color: var(--text-body); font-size: 11px; letter-spacing: 0.14em; }
+.footer-social { display: flex; gap: 18px; margin-top: 22px; color: var(--text-body); }
+.footer-social a { display: inline-flex; color: inherit; }
+.footer-social a:hover { color: var(--accent); }
 .footer-col__head { font-size: 11px; letter-spacing: 0.22em; color: var(--text); margin-bottom: 18px; text-transform: uppercase; }
 .footer-col__links { display: flex; flex-direction: column; gap: 10px; font-size: 12px; font-weight: 300; }
 .footer-col__links a { color: var(--text-muted); }
