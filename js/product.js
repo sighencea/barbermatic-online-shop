@@ -224,6 +224,9 @@
       var metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc && product.description) metaDesc.setAttribute("content", product.description);
 
+      // Highlight this product's category in the main menu.
+      if (window.setActiveNavCategory) window.setActiveNavCategory(product.category);
+
       var thumbs = buildThumbs(product);
       state.activeThumb = 0;
       renderThumbRail(product, thumbs);

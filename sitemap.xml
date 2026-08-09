@@ -55,4 +55,13 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url><loc>https://barbermatic.com/product.html?slug=blackwood-safety-razor</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://barbermatic.com/product.html?slug=bog-oak-safety-razor</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://barbermatic.com/product.html?slug=olivewood-cartridge-razor</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://barbermatic.com/product.html?slug=amboyna-rollerball-pen</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://barbermatic.com/product.html?slug=bog-oak-fountain-pen</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://barbermatic.com/product.html?slug=ebony-rollerball-pen</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://barbermatic.com/product.html?slug=leather-tweed-dopp-kit</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://barbermatic.com/product.html?slug=turned-worry-stone</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://barbermatic.com/product.html?slug=leather-razor-sleeve</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>

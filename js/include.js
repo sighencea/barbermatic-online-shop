@@ -32,10 +32,43 @@
     });
   }
 
+  // A page (e.g. a product detail) can hint which category is active even
+  // though its own URL isn't a category page. Set via setActiveNavCategory().
+  var activeCategoryHint = null;
+
+  // Mark the nav item matching the current page (+ ?category=), or the hinted
+  // category. Safe to call repeatedly and before/after the header is injected.
+  function markActiveNav() {
+    var links = document.querySelectorAll(".main-nav a");
+    if (!links.length) return;
+    var curPage = location.pathname.split("/").pop() || "index.html";
+    var curCat = new URLSearchParams(location.search).get("category") || "";
+    links.forEach(function (a) {
+      var tmp = document.createElement("a");
+      tmp.href = a.getAttribute("href");
+      var page = tmp.pathname.split("/").pop() || "index.html";
+      var cat = new URLSearchParams(tmp.search).get("category") || "";
+      var byLocation = page === curPage && cat === curCat;
+      var byHint = activeCategoryHint && page === "shop.html" && cat === activeCategoryHint;
+      if (byLocation || byHint) {
+        a.classList.add("is-active");
+        a.setAttribute("aria-current", "page");
+      }
+    });
+  }
+
+  // Called by product.js once it knows the product's category. Stores the hint
+  // (so it applies even if the header loads later) and re-marks the nav.
+  window.setActiveNavCategory = function (slug) {
+    activeCategoryHint = slug || null;
+    markActiveNav();
+  };
+
   async function boot() {
     var nodes = Array.prototype.slice.call(document.querySelectorAll("[data-include]"));
     await Promise.all(nodes.map(loadInclude));
     fillYear(document);
+    markActiveNav();
     document.dispatchEvent(new Event("includes:loaded"));
   }
 
