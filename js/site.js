@@ -39,13 +39,19 @@
     }
   };
 
-  document.addEventListener("DOMContentLoaded", function () {
+  // The header/footer are injected asynchronously by js/include.js, so bind on
+  // both DOMContentLoaded and the "includes:loaded" event it dispatches.
+  function initChrome() {
     Bag.renderBadge();
     // Newsletter forms are decorative placeholders until a provider is wired up.
     document.querySelectorAll("[data-newsletter]").forEach(function (form) {
+      if (form.dataset.bound) return;
+      form.dataset.bound = "1";
       form.addEventListener("submit", function (e) { e.preventDefault(); });
     });
-  });
+  }
+  document.addEventListener("DOMContentLoaded", initChrome);
+  document.addEventListener("includes:loaded", initChrome);
 
   global.Bag = Bag;
 })(window);

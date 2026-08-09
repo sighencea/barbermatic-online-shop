@@ -40,6 +40,8 @@ Storefront token (secret)                  loads static HTML + data/products.jso
 | `product.html` + `js/product.js` | Product detail; renders any product by `?slug=`. |
 | `cart.html` + `js/cart.js` | Bag; builds the Shopify checkout permalink. |
 | `thank-you.html`, `404.html` | Post-checkout return; not-found. |
+| `partials/header.html`, `partials/footer.html` | **The one** header and footer. Edit once; every page includes them. |
+| `js/include.js` | Client-side loader that swaps each `[data-include]` placeholder for its partial. |
 | `styles.css` | Design system (tokens + components) from the design handoff. |
 | `js/shopify.config.js` | **Non-secret** public config (store domain, tag). |
 | `js/catalog.js` | Loads catalog, checks purchasability, builds checkout URL. |
@@ -49,10 +51,19 @@ Storefront token (secret)                  loads static HTML + data/products.jso
 | `.github/workflows/deploy.yml` | Build + deploy to Pages. |
 | `assets/` | Images (only the real Amboyna photo exists; the rest are labelled placeholders). |
 
+## Editing the header or footer
+
+They live in **one file each** — `partials/header.html` and
+`partials/footer.html`. Every page has a placeholder
+(`<div data-include="partials/header.html"></div>`) that `js/include.js` fills
+on load. Change the partial once and it updates everywhere. The footer's
+`[data-year]` is set to the current year automatically.
+
 ## Run locally
 
-Any static server works (needed so `fetch` of `data/products.json` succeeds —
-opening `index.html` via `file://` will block that fetch on the product page):
+Any static server works (needed so `fetch` of the partials and
+`data/products.json` succeeds — opening pages via `file://` blocks those
+fetches, so the header/footer won't appear):
 
 ```bash
 # Python
