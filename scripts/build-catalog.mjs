@@ -57,8 +57,19 @@ const CATEGORY_TYPE_LABEL = {
 };
 
 // Storefront gate (second key): a vendor product joins the site only if its
-// `category:<slug>` tag is one of these. No valid category => stays Dr-K-only.
+// `category:<slug>` tag resolves to one of these. No valid category => Dr-K-only.
 const VALID_CATEGORIES = new Set(Object.keys(CATEGORY_TYPE_LABEL));
+
+// Accept common short/singular tag forms and normalise to a canonical slug, so a
+// `category:brush` or `category:pen` tag still lands the product correctly. Any
+// value not listed here passes through as-is (and is dropped if not canonical).
+const CATEGORY_ALIASES = {
+  "brush": "shaving-brushes", "brushes": "shaving-brushes", "shaving-brush": "shaving-brushes",
+  "razor": "razors",
+  "pen": "writing-instruments", "pens": "writing-instruments", "writing-instrument": "writing-instruments",
+  "personal": "personal-objects", "personal-object": "personal-objects",
+  "accessory": "accessories",
+};
 
 // Products carrying this tag fill the homepage "Signature Shaving Brushes" grid.
 const SIGNATURE_TAG = "barbermatic-signature-brush";
@@ -151,7 +162,8 @@ function mapProduct(node) {
   // Decides which shop page the product appears on. Product Type stays the
   // specific sub-type (e.g. "Safety Razor" vs "Gillette Razor") for display.
   const catTag = (node.tags || []).map((t) => /^category:(.+)$/i.exec(t)).find(Boolean);
-  const category = catTag ? catTag[1].trim().toLowerCase() : "";
+  const rawCategory = catTag ? catTag[1].trim().toLowerCase() : "";
+  const category = CATEGORY_ALIASES[rawCategory] || rawCategory;
 
   return {
     slug: node.handle,

@@ -36,7 +36,7 @@ jobs:
           SHOPIFY_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE_DOMAIN }}
           SHOPIFY_STOREFRONT_TOKEN: ${{ secrets.SHOPIFY_STOREFRONT_TOKEN }}
           SHOPIFY_API_VERSION: ${{ vars.SHOPIFY_API_VERSION }}
-          PRODUCT_TAG: ${{ vars.PRODUCT_TAG }}
+          PRODUCT_VENDOR: ${{ vars.PRODUCT_VENDOR }}
         run: node scripts/build-catalog.mjs
 
       - name: Upload artifact
