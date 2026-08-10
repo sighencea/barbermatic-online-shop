@@ -56,9 +56,10 @@
   /* Category pages. `slug` matches the product `category` field (from the
      Shopify `category:*` tag). Order here is the nav order. */
   Catalog.CATEGORIES = [
-    { slug: "razors", label: "Razors" },
     { slug: "shaving-brushes", label: "Shaving Brushes" },
+    { slug: "razors", label: "Razors" },
     { slug: "writing-instruments", label: "Writing Instruments" },
+    { slug: "personal-objects", label: "Personal Objects" },
     { slug: "accessories", label: "Accessories" }
   ];
 

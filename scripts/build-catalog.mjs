@@ -1,8 +1,8 @@
 /* Barbermatic — build-time catalog prerender.
  *
- * Runs in CI (GitHub Actions), NEVER in the browser. Fetches products tagged
- * `barbermatic` from the Shopify Storefront API using a token supplied as an
- * Actions secret, then:
+ * Runs in CI (GitHub Actions), NEVER in the browser. Fetches Barbermatic
+ * products (Vendor + a valid category tag) from the Shopify Storefront API
+ * using a token supplied as an Actions secret, then:
  *   1. rewrites data/products.json
  *   2. regenerates the product grid inside index.html (between the BM:PRODUCTS
  *      markers)
@@ -16,12 +16,17 @@
  * ---- Environment ---------------------------------------------------------
  *   SHOPIFY_STORE_DOMAIN     e.g. "barbermatic.myshopify.com"   (secret or var)
  *   SHOPIFY_STOREFRONT_TOKEN Storefront API access token         (SECRET)
- *   SHOPIFY_API_VERSION      e.g. "2025-01"          (optional, default below)
- *   PRODUCT_TAG              default "barbermatic"                (optional)
+ *   SHOPIFY_API_VERSION      e.g. "2025-10"          (optional, default below)
+ *   PRODUCT_VENDOR           default "Barbermatic"                (optional)
  *
  * ---- Shopify setup this expects ------------------------------------------
- *   - Products tagged with PRODUCT_TAG and published to the sales channel the
- *     Storefront token is scoped to (two-key, default-deny).
+ *   - Inclusion = Vendor == PRODUCT_VENDOR AND a valid `category:<slug>` tag
+ *     (default-deny). A vendor product with no valid category stays off the site
+ *     (it can still sell on the main Dr K Soap store). The channel the token is
+ *     scoped to is the hard gate — only publish Barbermatic products to it.
+ *   - The `category:<slug>` tag also decides the product's shop page. Product
+ *     Type is OPTIONAL: if set it is the card's sub-type label; if blank the
+ *     label is derived from the category (see CATEGORY_TYPE_LABEL).
  *   - Long-form editorial stored as product metafields. Set the namespace/keys
  *     in METAFIELDS below to match what you create in Shopify.
  */
@@ -35,8 +40,28 @@ const ROOT = join(__dirname, "..");
 
 const DOMAIN = process.env.SHOPIFY_STORE_DOMAIN || "";
 const TOKEN = process.env.SHOPIFY_STOREFRONT_TOKEN || "";
-const API_VERSION = process.env.SHOPIFY_API_VERSION || "2025-01";
-const TAG = process.env.PRODUCT_TAG || "barbermatic";
+const API_VERSION = process.env.SHOPIFY_API_VERSION || "2025-10";
+// Inclusion gate (default-deny): products whose Vendor equals this are shown.
+// The hard second key is channel publishing — only Barbermatic products are
+// published to the Storefront token's Headless channel.
+const VENDOR = process.env.PRODUCT_VENDOR || "Barbermatic";
+
+// Card sub-type label. Prefer Shopify's Product Type; else derive a sensible
+// singular label from the category so setting Product Type stays optional.
+const CATEGORY_TYPE_LABEL = {
+  "razors": "Razor",
+  "shaving-brushes": "Shaving Brush",
+  "writing-instruments": "Writing Instrument",
+  "personal-objects": "Personal Object",
+  "accessories": "Accessory",
+};
+
+// Storefront gate (second key): a vendor product joins the site only if its
+// `category:<slug>` tag is one of these. No valid category => stays Dr-K-only.
+const VALID_CATEGORIES = new Set(Object.keys(CATEGORY_TYPE_LABEL));
+
+// Products carrying this tag fill the homepage "Signature Shaving Brushes" grid.
+const SIGNATURE_TAG = "barbermatic-signature-brush";
 
 // Metafield identifiers to read. Adjust to match Shopify. Namespace: barbermatic.
 const METAFIELDS = [
@@ -60,6 +85,7 @@ query Products($query: String!, $mf: [HasMetafieldsIdentifier!]!) {
       node {
         handle
         title
+        vendor
         descriptionHtml
         description
         tags
@@ -83,7 +109,7 @@ async function fetchProducts() {
     },
     body: JSON.stringify({
       query: QUERY,
-      variables: { query: `tag:${TAG}`, mf: METAFIELDS },
+      variables: { query: `vendor:"${VENDOR}"`, mf: METAFIELDS },
     }),
   });
   if (!res.ok) throw new Error(`Shopify HTTP ${res.status}: ${await res.text()}`);
@@ -131,8 +157,9 @@ function mapProduct(node) {
     slug: node.handle,
     title: node.title,
     material,
-    type: node.productType || "Shaving Brush",
+    type: node.productType || CATEGORY_TYPE_LABEL[category] || "Barbermatic",
     category,
+    signature: (node.tags || []).some((t) => String(t).toLowerCase() === SIGNATURE_TAG),
     price: `${sym}${amount.toFixed(2)}`,
     priceAmount: amount,
     currency: price.currencyCode,
@@ -168,6 +195,15 @@ function cardHtml(p) {
     </a>`;
 }
 
+// The homepage grid shows up to 5 products tagged `barbermatic-signature-brush`.
+// Fallbacks keep the grid from ever emptying: shaving brushes, else first 5.
+function pickSignature(products) {
+  const tagged = products.filter((p) => p.signature);
+  if (tagged.length) return tagged.slice(0, 5);
+  const brushes = products.filter((p) => p.category === "shaving-brushes");
+  return (brushes.length ? brushes : products).slice(0, 5);
+}
+
 async function regenIndexGrid(products) {
   const file = join(ROOT, "index.html");
   const html = await readFile(file, "utf8");
@@ -178,7 +214,7 @@ async function regenIndexGrid(products) {
   if (si === -1 || ei === -1) { console.warn("index.html markers not found; skipping grid regen"); return; }
   const before = html.slice(0, html.indexOf("-->", si) + 3);
   const after = html.slice(ei);
-  const cards = products.slice(0, 5).map(cardHtml).join("\n");
+  const cards = pickSignature(products).map(cardHtml).join("\n");
   const grid = `\n  <div class="card-grid card-grid--5" data-product-grid>\n${cards}\n  </div>\n  `;
   await writeFile(file, before + grid + after, "utf8");
   console.log("Regenerated index.html product grid.");
@@ -190,12 +226,21 @@ async function main() {
     console.log("Keeping seeded data/products.json. Build continues.");
     return;
   }
-  console.log(`Fetching products tagged "${TAG}" from ${DOMAIN} ...`);
+  console.log(`Fetching products with vendor "${VENDOR}" from ${DOMAIN} ...`);
   const nodes = await fetchProducts();
-  const products = nodes
-    .filter((n) => (n.tags || []).includes(TAG))
+  // Belt-and-suspenders re-filter (default-deny). Case-insensitive vendor match;
+  // the Storefront `vendor:` query already filters — this guards the mapping so
+  // a stray product can never slip through.
+  const wanted = VENDOR.toLowerCase();
+  const vendorMatched = nodes
+    .filter((n) => String(n.vendor || "").toLowerCase() === wanted)
     .map(mapProduct);
-  console.log(`Mapped ${products.length} product(s).`);
+  // Second key of the gate: keep only products with a valid category:<slug> tag.
+  // A vendor product with no/unknown category stays off the site (Dr-K-only).
+  const products = vendorMatched.filter((p) => VALID_CATEGORIES.has(p.category));
+  const dropped = vendorMatched.length - products.length;
+  console.log(`Mapped ${products.length} product(s)` +
+    (dropped ? ` (excluded ${dropped} vendor product(s) with no valid category tag).` : "."));
 
   const out = {
     _comment: "GENERATED by scripts/build-catalog.mjs. Do not edit by hand.",

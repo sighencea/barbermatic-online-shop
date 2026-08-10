@@ -283,6 +283,7 @@ button { font-family: var(--sans); }
 }
 .promise .h2 { color: var(--ivory-text); max-width: 520px; }
 .promise__body { font-size: 14px; font-weight: 300; line-height: 1.8; color: var(--ivory-text-2); margin: 0; max-width: 460px; }
+.promise__img { width: 100%; height: 340px; object-fit: cover; display: block; }
 .promise__stamp { justify-self: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .promise__stamp-label { font-size: 9px; letter-spacing: 0.3em; color: var(--accent-ivory); text-align: center; line-height: 1.9; }
 .circle-mark {
@@ -292,7 +293,7 @@ button { font-family: var(--sans); }
 }
 
 /* Collections strip */
-.collections { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; background: var(--bg); padding: 2px; }
+.collections { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; background: var(--bg); padding: 2px; }
 .tile { position: relative; display: block; aspect-ratio: 3/4; background: var(--surface-4); overflow: hidden; }
 .tile__caption {
   position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px;
