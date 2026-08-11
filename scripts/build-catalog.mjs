@@ -52,7 +52,7 @@ const CATEGORY_TYPE_LABEL = {
   "razors": "Razor",
   "shaving-brushes": "Shaving Brush",
   "writing-instruments": "Writing Instrument",
-  "personal-objects": "Personal Object",
+  "edc": "Everyday Carry",
   "accessories": "Accessory",
 };
 
@@ -67,7 +67,7 @@ const CATEGORY_ALIASES = {
   "brush": "shaving-brushes", "brushes": "shaving-brushes", "shaving-brush": "shaving-brushes",
   "razor": "razors",
   "pen": "writing-instruments", "pens": "writing-instruments", "writing-instrument": "writing-instruments",
-  "personal": "personal-objects", "personal-object": "personal-objects",
+  "personal": "edc", "personal-object": "edc", "personal-objects": "edc", "everyday-carry": "edc",
   "accessory": "accessories",
 };
 

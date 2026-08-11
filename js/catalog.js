@@ -59,7 +59,7 @@
     { slug: "shaving-brushes", label: "Shaving Brushes" },
     { slug: "razors", label: "Razors" },
     { slug: "writing-instruments", label: "Writing Instruments" },
-    { slug: "personal-objects", label: "Personal Objects" },
+    { slug: "edc", label: "Everyday Carry" },
     { slug: "accessories", label: "Accessories" }
   ];
 
