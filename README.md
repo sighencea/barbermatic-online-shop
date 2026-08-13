@@ -5,10 +5,12 @@ grooming objects. Hosted on **GitHub Pages**. Products come from **Shopify**
 (Storefront API), pulled in at **build time** so no API credential ever reaches
 the browser.
 
-> **Status:** the site is fully built and runs today on a seeded catalog
-> (`data/products.json`). The Shopify API is connected at a later stage — see
-> [Connecting Shopify](#connecting-shopify). Until then, "Add to Bag" and
-> checkout are shown but disabled with a "coming soon" note.
+> **Status (2026-08-13):** live. Shopify is connected — the catalog is
+> prerendered from the Storefront API on every deploy, and checkout works via
+> Shopify cart permalinks. Products are gated by **Vendor == `Barbermatic`** AND
+> a valid **`category:<slug>` tag**. The full operational runbook is
+> **[`SHOPIFY_CONNECTION_PLAN.md`](SHOPIFY_CONNECTION_PLAN.md)** (authoritative);
+> the [Connecting Shopify](#connecting-shopify) section below is a summary.
 
 ---
 
@@ -18,11 +20,13 @@ the browser.
 Build (GitHub Actions)                     Browser (public, no secrets)
 ─────────────────────────                  ────────────────────────────
 Storefront token (secret)                  loads static HTML + data/products.json
-  → fetch products tagged                  "Add to Bag" stores selection in
-    "barbermatic"                            localStorage (bm_cart)
-  → write data/products.json               "Checkout" → Shopify cart permalink
-  → regenerate index.html grid               → Shopify-hosted checkout (PCI, tax,
-  → deploy to Pages                            inventory decrement, emails)
+  → fetch products where                   "Add to Bag" stores selection in
+    Vendor == Barbermatic                    localStorage (bm_cart)
+  → keep those with a valid                "Checkout" → Shopify cart permalink
+    category:<slug> tag                       → Shopify-hosted checkout (PCI, tax,
+  → write data/products.json                   inventory decrement, emails)
+  → regenerate index.html grid
+  → deploy to Pages
 ```
 
 - **No Cloudflare Worker.** With build-time prerender + cart permalinks, no
@@ -79,24 +83,30 @@ Then open <http://localhost:8000>.
 
 ## Connecting Shopify
 
-Do these once, at the API-connection stage.
+> **This is a summary.** The step-by-step operational runbook (with the smoke
+> test, GitHub secrets, and troubleshooting) is
+> **[`SHOPIFY_CONNECTION_PLAN.md`](SHOPIFY_CONNECTION_PLAN.md)** — follow that.
+> Already connected as of 2026-08-13; this section explains the model.
 
 ### 1. Prepare products in Shopify
 1. Create each piece as a product. Set **inventory = 1**, **Track quantity = ON**,
    **"Continue selling when out of stock" = OFF** (this is the anti-oversell
    guarantee for one-of-one pieces).
-2. Add the tag **`barbermatic`** to every product that belongs on this shop.
-   Your existing generic products stay out automatically.
+2. Set **Vendor = `Barbermatic`** on every product that belongs on this shop
+   (the first key of the gate). Vendor-only products still sell on the main Dr K
+   Soap store; the category tag below is what promotes one onto this site.
 2a. **Category** — add exactly one category tag so the product lands on the
-   right menu page. The menu maps to these slugs:
+   right menu page (the second key). The menu maps to these five slugs:
    - `category:razors` — RAZORS (safety razors, Gillette/cartridge razors, …)
    - `category:shaving-brushes` — SHAVING BRUSHES
    - `category:writing-instruments` — WRITING INSTRUMENTS
+   - `category:edc` — EVERYDAY CARRY
    - `category:accessories` — ACCESSORIES
 
-   Use Shopify's **Product Type** for the specific sub-type ("Safety Razor" vs
-   "Gillette Razor") — both still show under RAZORS via the one `category:razors`
-   tag. DISCOVER ALL shows everything regardless of category. The build reads the
+   *No valid category tag ⇒ the product stays Dr-K-only.* Use Shopify's
+   **Product Type** for the specific sub-type ("Safety Razor" vs "Gillette
+   Razor") — both still show under RAZORS via the one `category:razors` tag.
+   DISCOVER ALL shows everything regardless of category. The build reads the
    `category:*` tag into each product's `category` field (`scripts/build-catalog.mjs`).
 3. Add editorial copy as **metafields** (so new products need no code change).
    Create these definitions (Settings → Custom data → Products), namespace
@@ -112,17 +122,20 @@ Do these once, at the API-connection stage.
    fields. Keys are configurable in `scripts/build-catalog.mjs` (`METAFIELDS`).
 
 ### 2. Create a dedicated sales channel + Storefront token
-1. Add the **Headless** channel (or a custom app with Storefront API access).
-2. Publish only the `barbermatic`-tagged products to that channel. A product is
-   pulled only if it's **tagged AND published there** — two-key, default-deny.
-3. Copy the **Storefront API access token**.
+1. Add the **Headless** channel (Shopify retired the old in-admin custom-app
+   flow in Spring '26 — use Headless). Copy its **Public access token**.
+2. Publish only the Barbermatic products to that channel. A product is pulled
+   only if its **Vendor is `Barbermatic`**, it has a valid **`category:` tag**,
+   AND it's **published to that channel** — default-deny.
+3. The token is public-safe but still lives only as a GitHub secret (never in the
+   browser).
 
 ### 3. Add secrets to GitHub
 Repo → Settings → Secrets and variables → Actions:
-- **Secrets:** `SHOPIFY_STORE_DOMAIN` (e.g. `barbermatic.myshopify.com`),
+- **Secrets:** `SHOPIFY_STORE_DOMAIN` (`drksoap.myshopify.com`),
   `SHOPIFY_STOREFRONT_TOKEN`
-- **Variables (optional):** `SHOPIFY_API_VERSION` (e.g. `2025-01`),
-  `PRODUCT_TAG` (defaults to `barbermatic`)
+- **Variables (optional):** `SHOPIFY_API_VERSION` (e.g. `2025-10`),
+  `PRODUCT_VENDOR` (defaults to `Barbermatic`)
 
 ### 4. Set the public checkout domain
 In `js/shopify.config.js`, set `shopDomain` to your Shopify domain (non-secret).
@@ -145,9 +158,10 @@ checkout.
 ## Deploying to GitHub Pages
 1. Push to `main`.
 2. Repo → Settings → Pages → **Source: GitHub Actions**.
-3. Custom domain: `CNAME` contains `barbermatic.com`. Point DNS at GitHub Pages
+3. Custom domain *(not set up yet — no `CNAME` file in the repo)*. When ready,
+   add a `CNAME` file containing `barbermatic.com`, point DNS at GitHub Pages
    (apex A/AAAA records + `www` CNAME to `<user>.github.io`), then enable
-   **Enforce HTTPS**. If you're not using a custom domain yet, delete `CNAME`.
+   **Enforce HTTPS**.
 
 ## Notes on the design
 - Recreated faithfully from `draft/…/design_handoff_barbermatic_shop`. Colors,
