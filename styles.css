@@ -53,7 +53,11 @@ body {
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden; /* safety net: nothing scrolls sideways on small screens */
 }
+/* Set by js/site.js while the mobile nav drawer is open — freezes the page
+   behind it so only the menu scrolls. */
+body.nav-locked { overflow: hidden; }
 
 a { color: var(--text); text-decoration: none; transition: color .3s; }
 a:hover { color: var(--accent); }
@@ -120,9 +124,47 @@ button { font-family: var(--sans); }
   display: block;
   height: 22px;
   width: auto;
+  /* Drive size by height; never let the global img{max-width:100%} clamp the
+     width (that clamp + fixed height is what squished the wordmark as the
+     viewport narrowed). Mobile switches to width-driven sizing below. */
+  max-width: none;
   filter: invert(0.92);
   transition: opacity .3s;
 }
+
+/* Hamburger (mobile only; hidden on desktop, revealed at the nav breakpoint). */
+.nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  margin-left: -10px;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  z-index: 80; /* stays above the open drawer so it doubles as the close (✕) */
+}
+.nav-toggle__bars,
+.nav-toggle__bars::before,
+.nav-toggle__bars::after {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform .3s ease, background-color .2s ease;
+}
+.nav-toggle__bars { position: relative; }
+.nav-toggle__bars::before { position: absolute; left: 0; top: -6px; }
+.nav-toggle__bars::after  { position: absolute; left: 0; top: 6px; }
+/* Open state: middle bar vanishes, outer bars cross into an ✕. */
+.site-header.nav-open .nav-toggle__bars { background: transparent; }
+.site-header.nav-open .nav-toggle__bars::before { transform: translateY(6px) rotate(45deg); }
+.site-header.nav-open .nav-toggle__bars::after  { transform: translateY(-6px) rotate(-45deg); }
 .wordmark:hover .wordmark__img { opacity: 0.8; }
 
 .main-nav {
@@ -600,8 +642,55 @@ button { font-family: var(--sans); }
 /* ==========================================================================
    Responsive
    ========================================================================== */
+/* ---- Tablet & below: collapse the horizontal nav into a hamburger drawer ----
+   The 7-item nav won't fit horizontally below ~1180px, so at 1100px we swap it
+   for a hamburger + full-height slide-in drawer (hamburger left, logo centred,
+   utility icons right). */
 @media (max-width: 1100px) {
-  .main-nav { gap: 14px; font-size: 11px; letter-spacing: 0.12em; }
+  .site-header {
+    grid-template-columns: auto 1fr auto;
+    padding: 16px 22px;
+    /* backdrop-filter would trap the position:fixed drawer inside the header
+       (it establishes a containing block). Drop it on mobile; the 92%-opaque
+       background already reads as solid. */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .nav-toggle { display: inline-flex; }
+  .wordmark { justify-self: center; }
+
+  /* .main-nav becomes a full-screen slide-in panel. Opaque background covers
+     the page beneath; the hamburger (z-index 80) stays on top as the ✕. */
+  .main-nav {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: 84px 30px 40px;
+    background: var(--surface-1);
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    transform: translateX(100%);
+    transition: transform .32s ease;
+    overflow-y: auto;
+    z-index: 60;
+  }
+  .site-header.nav-open .main-nav { transform: none; }
+  .main-nav a {
+    width: 100%;
+    padding: 17px 4px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .main-nav a.is-active { color: var(--accent); text-decoration: none; }
+
+  /* Bigger tap targets for the utility icons. */
+  .header-utils { gap: 6px; }
+  .header-utils a { min-width: 42px; min-height: 42px; align-items: center; justify-content: center; }
+  .bag-badge { top: 6px; right: 4px; }
+
+  /* Card / layout reductions (unchanged from before). */
   .card-grid--5 { grid-template-columns: repeat(3, 1fr); }
   .collections { grid-template-columns: repeat(3, 1fr); }
   .footer-grid { grid-template-columns: 1fr 1fr; }
@@ -611,30 +700,70 @@ button { font-family: var(--sans); }
   .pdp__info { grid-column: 1 / -1; }
 }
 
-@media (max-width: 760px) {
-  .site-header { padding: 18px 20px; }
-  .main-nav { display: none; }
+/* ---- Portrait tablets: stack the hero and other side-by-side sections ---- */
+@media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; min-height: auto; }
-  .hero__text { padding: 48px 20px; order: 2; }
-  .hero__media { min-height: 60vh; }
-  .section-pad { padding: 48px 20px; }
-  .promise { padding: 48px 20px; }
+  .hero__text { padding: 56px 24px; order: 2; }
+  .hero__media { min-height: 56vh; order: 1; }
+  .hero__pager { display: none; }
   .split--materials, .split--maker { grid-template-columns: 1fr; }
-  .split__text { padding: 48px 24px; }
+  .split__media { min-height: 300px; }
+  .split__text { padding: 56px 28px; }
+  .value-strip { grid-template-columns: repeat(3, 1fr); }
+  .value-cell:nth-child(3) { border-right: none; }
+  .value-cell { border-bottom: 1px solid var(--hairline-soft); }
+}
+
+/* ---- Phones ---- */
+@media (max-width: 600px) {
+  .site-header { padding: 14px 16px; }
+  /* Width-driven logo on phones: scales with the viewport, aspect ratio intact
+     (no squish), and never crowds the hamburger + icons on a 320px screen. */
+  .wordmark__img { height: auto; width: clamp(118px, 42vw, 158px); max-width: 100%; }
+  .wordmark__sub { display: none; }
+
+  .hero__text { padding: 44px 20px; }
+  .hero__body { max-width: none; }
+  .section-pad { padding: 48px 20px; }
+  .section-head { margin-bottom: 24px; }
+  .promise { padding: 44px 20px; gap: 32px; }
+  .split__text { padding: 44px 20px; }
   .card-grid--5, .card-grid--4 { grid-template-columns: repeat(2, 1fr); }
   .collections { grid-template-columns: repeat(2, 1fr); }
   .value-strip { grid-template-columns: 1fr 1fr; }
-  .value-cell { border-bottom: 1px solid var(--hairline-soft); }
+  .value-cell:nth-child(3) { border-right: 1px solid var(--hairline-soft); }
+  .value-cell { padding: 24px 22px; }
+
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .site-footer { padding: 48px 20px 0; }
+  .footer-bottom { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 12px; }
+  .footer-legal { flex-wrap: wrap; justify-content: center; gap: 14px 22px; }
+  .footer-credit { justify-self: center; text-align: center; }
+
   .shop { padding: 48px 20px 64px; }
-  .shop-grid { grid-template-columns: 1fr 1fr; }
-  .gift-grid { grid-template-columns: 1fr; }
-  .pdp { grid-template-columns: 1fr; padding: 24px 20px 48px; }
+  .shop-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .page { padding: 56px 20px 90px; }
+
+  /* Product detail: single column, image-led, comfortable heights. */
+  .pdp { grid-template-columns: 1fr; padding: 20px 20px 48px; gap: 24px; }
+  .pdp__stage { min-height: 0; aspect-ratio: 4 / 5; }
   .thumb-rail { flex-direction: row; flex-wrap: wrap; order: 3; }
+  .pdp__title { font-size: clamp(30px, 8vw, 40px); }
+  .traits { grid-template-columns: 1fr 1fr; gap: 20px 16px; }
   .pdp-lower { grid-template-columns: 1fr; gap: 32px; padding: 48px 20px; }
   .editorial { grid-template-columns: 1fr 1fr; }
+  .editorial__quote { padding: 26px 22px; grid-column: 1 / -1; }
+  .editorial__text { font-size: 19px; }
   .related .card-grid--4 { grid-template-columns: 1fr 1fr; }
-  .footer-bottom { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 12px; }
-  .footer-credit { justify-self: center; text-align: center; }
+
+  .cart-line { grid-template-columns: 64px 1fr auto; gap: 14px; }
+  .cart-line__media { width: 64px; height: 64px; }
+
+  .cookie-notice { left: 12px; right: 12px; bottom: 12px; padding: 16px; }
+}
+
+/* ---- Small phones ---- */
+@media (max-width: 380px) {
+  .traits { grid-template-columns: 1fr; }
+  .cta-row { flex-wrap: wrap; }
 }

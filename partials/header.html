@@ -2,11 +2,14 @@
      <div data-include="partials/header.html"></div> (js/include.js).
      Links/asset paths are root-relative — all pages live at the site root. -->
 <header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav">
+    <span class="nav-toggle__bars" aria-hidden="true"></span>
+  </button>
   <a class="wordmark" href="index.html" aria-label="Barbermatic home">
     <img class="wordmark__img" src="assets/WordOnly_SingleLine.png" alt="Barbermatic" width="1182" height="138">
     <div class="wordmark__sub">HANDMADE IN IRELAND</div>
   </a>
-  <nav class="main-nav" aria-label="Primary">
+  <nav class="main-nav" id="mainNav" aria-label="Primary">
     <a href="index.html">HOME</a>
     <a href="shop.html">DISCOVER ALL</a>
     <a href="shop.html?category=razors">RAZORS</a>

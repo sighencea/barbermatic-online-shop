@@ -41,8 +41,42 @@
 
   // The header/footer are injected asynchronously by js/include.js, so bind on
   // both DOMContentLoaded and the "includes:loaded" event it dispatches.
+  // Mobile nav drawer. The header is injected async, so bind here (initChrome
+  // runs on both DOMContentLoaded and includes:loaded). Idempotent via
+  // dataset.bound on the toggle.
+  function initMobileNav() {
+    var header = document.querySelector(".site-header");
+    var toggle = document.querySelector(".nav-toggle");
+    if (!header || !toggle || toggle.dataset.bound) return;
+    toggle.dataset.bound = "1";
+    var nav = document.getElementById("mainNav");
+
+    function setOpen(open) {
+      header.classList.toggle("nav-open", open);
+      document.body.classList.toggle("nav-locked", open);
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    }
+    toggle.addEventListener("click", function () {
+      setOpen(!header.classList.contains("nav-open"));
+    });
+    // Close after a link tap, on Escape, or when resizing back up to desktop.
+    if (nav) {
+      nav.addEventListener("click", function (e) {
+        if (e.target.closest("a")) setOpen(false);
+      });
+    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setOpen(false);
+    });
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 1100) setOpen(false);
+    });
+  }
+
   function initChrome() {
     Bag.renderBadge();
+    initMobileNav();
     // Newsletter forms are decorative placeholders until a provider is wired up.
     document.querySelectorAll("[data-newsletter]").forEach(function (form) {
       if (form.dataset.bound) return;
