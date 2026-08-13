@@ -110,29 +110,63 @@
     var purchasable = window.Catalog.isPurchasable(product);
     var inBag = window.Bag.has(product.slug);
 
+    // Every button that reflects bag state (the main CTA + the mobile sticky-bar
+    // CTA) is painted together from one place, so they can never disagree.
+    var ctas = [cta];
     function paintCta() {
       inBag = window.Bag.has(product.slug);
-      if (soldOut) {
-        cta.textContent = "SOLD OUT"; cta.disabled = true; cta.classList.add("is-sold");
-      } else if (!purchasable) {
-        cta.textContent = "CHECKOUT COMING SOON"; cta.disabled = true; cta.classList.add("is-sold");
-      } else if (inBag) {
-        cta.textContent = "IN YOUR BAG"; cta.disabled = true;
-      } else {
-        cta.textContent = "ADD TO BAG"; cta.disabled = false; cta.classList.remove("is-sold");
-      }
+      var label, disabled, sold;
+      if (soldOut) { label = "SOLD OUT"; disabled = true; sold = true; }
+      else if (!purchasable) { label = "CHECKOUT COMING SOON"; disabled = true; sold = true; }
+      else if (inBag) { label = "IN YOUR BAG"; disabled = true; sold = false; }
+      else { label = "ADD TO BAG"; disabled = false; sold = false; }
+      ctas.forEach(function (b) {
+        b.textContent = label;
+        b.disabled = disabled;
+        b.classList.toggle("is-sold", sold);
+      });
     }
-    paintCta();
 
-    cta.addEventListener("click", function () {
+    function addToBag() {
       if (soldOut || !purchasable) return;
-      var added = window.Bag.add({ slug: product.slug, variantId: product.variantId });
-      if (added) paintCta();
-    });
+      if (window.Bag.add({ slug: product.slug, variantId: product.variantId })) paintCta();
+    }
+    cta.addEventListener("click", addToBag);
 
     row.appendChild(cta);
     row.appendChild(wish);
     info.appendChild(row);
+
+    // Mobile-only sticky Add-to-Bag bar. Lives on <body> so it's fixed to the
+    // viewport (not clipped by the PDP grid); CSS hides it entirely on desktop
+    // and keeps it off-screen until the main CTA scrolls out of view.
+    (function buildStickyBar() {
+      var old = document.querySelector("[data-pdp-sticky]");
+      if (old) old.remove();
+      var bar = el("div", "pdp-sticky");
+      bar.setAttribute("data-pdp-sticky", "");
+      var binfo = el("div", "pdp-sticky__info");
+      binfo.appendChild(el("div", "pdp-sticky__name", product.title));
+      binfo.appendChild(el("div", "pdp-sticky__price", product.price));
+      var bcta = el("button", "btn btn--solid pdp-sticky__cta");
+      bcta.type = "button";
+      bcta.addEventListener("click", addToBag);
+      bar.appendChild(binfo);
+      bar.appendChild(bcta);
+      document.body.appendChild(bar);
+      ctas.push(bcta);
+
+      // Reveal the bar only once the main CTA row has scrolled away.
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) {
+          bar.classList.toggle("is-visible", !entries[0].isIntersecting);
+        }, { rootMargin: "0px 0px -20% 0px" }).observe(row);
+      } else {
+        bar.classList.add("is-visible");
+      }
+    })();
+
+    paintCta();
 
     // Reassurance
     var re = el("div", "reassure");

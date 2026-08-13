@@ -508,6 +508,35 @@ button { font-family: var(--sans); }
 .accordion__panel { padding: 0 2px 20px; font-size: 13px; font-weight: 300; line-height: 1.8; color: var(--text-body); max-width: 420px; }
 .accordion__panel[hidden] { display: none; }
 
+/* Mobile sticky Add-to-Bag bar. Hidden on desktop; on phones/tablets it slides
+   up from the bottom of the viewport once the main CTA scrolls out of view. The
+   button state stays in sync with the main CTA (see js/product.js). */
+.pdp-sticky {
+  display: none; /* enabled only at the mobile breakpoint below */
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  /* Below the header (z 50) so the open hamburger drawer covers it; the bar and
+     header never overlap spatially, so this only matters when the drawer opens. */
+  z-index: 45;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: rgba(16,13,10,0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid var(--hairline-strong);
+  transform: translateY(100%);
+  transition: transform .3s ease;
+}
+.pdp-sticky.is-visible { transform: none; }
+.pdp-sticky__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pdp-sticky__name {
+  font-size: 12px; letter-spacing: 0.02em; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pdp-sticky__price { font-size: 13px; color: var(--text-body); }
+.pdp-sticky__cta { flex: none; padding: 15px 26px; }
+
 /* Editorial strip (PDP) */
 .editorial { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 2px; background: var(--bg); border-top: 1px solid var(--hairline-soft); }
 .editorial__cell { position: relative; aspect-ratio: 1; }
@@ -712,6 +741,7 @@ button { font-family: var(--sans); }
   .value-strip { grid-template-columns: repeat(3, 1fr); }
   .value-cell:nth-child(3) { border-right: none; }
   .value-cell { border-bottom: 1px solid var(--hairline-soft); }
+  .pdp-sticky { display: flex; }
 }
 
 /* ---- Phones ---- */
