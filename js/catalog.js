@@ -40,6 +40,24 @@
       return !!(CONFIG.shopDomain && product && product.variantId);
     },
 
+    /* "Kit" product: one physical piece sold as several Shopify variants
+       (e.g. Handle Only / Synthetic Knot / Silvertip Knot). The PDP renders
+       these as option chips and the bag allows only one option per piece. */
+    isKit(product) {
+      return !!(product && product.kit && product.variants && product.variants.length > 1);
+    },
+
+    /* Kit options a customer can still buy. */
+    sellableOptions(product) {
+      if (!this.isKit(product)) return [];
+      return product.variants.filter(function (v) { return v.availableForSale && v.available > 0; });
+    },
+
+    findVariant(product, variantId) {
+      if (!product || !product.variants) return null;
+      return product.variants.find(function (v) { return String(v.id) === String(variantId); }) || null;
+    },
+
     /* Build a Shopify cart permalink -> lands directly on Shopify's hosted
        checkout. No token, no server. lines: [{ variantId, qty }].
        Returns null if the store isn't connected yet. */

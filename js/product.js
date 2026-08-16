@@ -72,13 +72,53 @@
   function renderInfo(product) {
     var info = $("[data-info]");
     info.innerHTML = "";
-    var soldOut = !(product.available > 0);
+
+    // Kit products: one physical piece offered as several Shopify variants
+    // (e.g. Handle Only / Synthetic Knot / Silvertip Knot). Rendered as option
+    // chips; only one option of the piece may ever be in the bag.
+    var kit = window.Catalog.isKit(product);
+    var sellable = window.Catalog.sellableOptions(product);
+    var selectedVariant = null; // kit: none until the customer picks a chip
+    var soldOut = kit ? sellable.length === 0 : !(product.available > 0);
 
     info.appendChild(el("div", "eyebrow", soldOut ? "SOLD" : "ONE OF ONE"));
     var h1 = el("h1", "pdp__title", product.title);
     info.appendChild(h1);
-    info.appendChild(el("div", "pdp__price", product.price));
+    var priceEl = el("div", "pdp__price", product.price);
+    info.appendChild(priceEl);
     info.appendChild(el("p", "pdp__desc", product.description || ""));
+
+    // Option chips (kit products only)
+    var chipEls = [];
+    if (kit) {
+      var optWrap = el("div", "pdp-options");
+      optWrap.appendChild(el("div", "pdp-options__label", (product.optionName || "Option").toUpperCase()));
+      var chipRow = el("div", "pdp-options__chips");
+      product.variants.forEach(function (v) {
+        var chip = el("button", "chip", v.title);
+        chip.type = "button";
+        var vSellable = v.availableForSale && v.available > 0;
+        if (!vSellable) chip.classList.add("is-unavailable");
+        chip.setAttribute("aria-pressed", "false");
+        chip.addEventListener("click", function () {
+          selectedVariant = v;
+          chipEls.forEach(function (c) {
+            var on = c.__variant === v;
+            c.classList.toggle("is-selected", on);
+            c.setAttribute("aria-pressed", on ? "true" : "false");
+          });
+          showNotice("");
+          paintPrice();
+          paintAvailability();
+          paintCta();
+        });
+        chip.__variant = v;
+        chipEls.push(chip);
+        chipRow.appendChild(chip);
+      });
+      optWrap.appendChild(chipRow);
+      info.appendChild(optWrap);
+    }
 
     // Traits
     var traits = el("div", "traits");
@@ -95,9 +135,46 @@
 
     // Availability
     var avail = el("div", "availability" + (soldOut ? " is-sold" : ""));
+    var availText = document.createTextNode("");
     avail.appendChild(el("span", "dot"));
-    avail.appendChild(document.createTextNode(soldOut ? "This piece has found its owner" : "Only 1 available"));
+    avail.appendChild(availText);
     info.appendChild(avail);
+
+    function paintAvailability() {
+      var sold, text;
+      if (soldOut) { sold = true; text = "This piece has found its owner"; }
+      else if (!kit) { sold = false; text = "Only 1 available"; }
+      else if (!selectedVariant) {
+        sold = false;
+        text = sellable.length + " option" + (sellable.length === 1 ? "" : "s") + " available";
+      }
+      else if (selectedVariant.availableForSale && selectedVariant.available > 0) {
+        sold = false; text = "Only 1 available";
+      }
+      else { sold = true; text = "This option has found its owner"; }
+      avail.classList.toggle("is-sold", sold);
+      availText.textContent = text;
+    }
+
+    function paintPrice() {
+      var price = (kit && selectedVariant) ? selectedVariant.price : product.price;
+      priceEl.textContent = price;
+      priceEls.forEach(function (p) { p.textContent = price; });
+    }
+
+    // Notice line (Shopify-style cart messages). Painted into the info column
+    // and mirrored inside the mobile sticky bar so it's visible either way.
+    var notice = el("div", "pdp-notice");
+    notice.hidden = true;
+    info.appendChild(notice);
+    var noticeEls = [notice];
+    function showNotice(text, ok) {
+      noticeEls.forEach(function (n) {
+        n.textContent = text || "";
+        n.hidden = !text;
+        n.classList.toggle("is-ok", !!ok);
+      });
+    }
 
     // CTA row
     var row = el("div", "cta-row");
@@ -113,11 +190,16 @@
     // Every button that reflects bag state (the main CTA + the mobile sticky-bar
     // CTA) is painted together from one place, so they can never disagree.
     var ctas = [cta];
+    var priceEls = [];
     function paintCta() {
       inBag = window.Bag.has(product.slug);
       var label, disabled, sold;
       if (soldOut) { label = "SOLD OUT"; disabled = true; sold = true; }
       else if (!purchasable) { label = "CHECKOUT COMING SOON"; disabled = true; sold = true; }
+      else if (kit && !selectedVariant) { label = "MAKE A SELECTION"; disabled = true; sold = true; }
+      // Kit CTA stays active even when the piece is in the bag — clicking again
+      // surfaces the explanatory notice instead (mirrors Shopify's behavior).
+      else if (kit) { label = "ADD TO BAG"; disabled = false; sold = false; }
       else if (inBag) { label = "IN YOUR BAG"; disabled = true; sold = false; }
       else { label = "ADD TO BAG"; disabled = false; sold = false; }
       ctas.forEach(function (b) {
@@ -129,7 +211,28 @@
 
     function addToBag() {
       if (soldOut || !purchasable) return;
-      if (window.Bag.add({ slug: product.slug, variantId: product.variantId })) paintCta();
+
+      if (!kit) {
+        if (window.Bag.add({ slug: product.slug, variantId: product.variantId })) paintCta();
+        return;
+      }
+
+      if (!selectedVariant) return;
+
+      // One kit option per piece: the same handle can't be sold twice.
+      var existing = window.Bag.read().find(function (l) { return l.slug === product.slug; });
+      if (existing && String(existing.variantId) === String(selectedVariant.id)) {
+        showNotice("The maximum quantity of this item is already in your cart.");
+        return;
+      }
+      if (existing || !(selectedVariant.availableForSale && selectedVariant.available > 0)) {
+        showNotice("The product '" + product.title + " - " + selectedVariant.title + "' is already sold out.");
+        return;
+      }
+      if (window.Bag.add({ slug: product.slug, variantId: selectedVariant.id })) {
+        showNotice("Added to your bag.", true);
+        paintCta();
+      }
     }
     cta.addEventListener("click", addToBag);
 
@@ -145,12 +248,18 @@
       if (old) old.remove();
       var bar = el("div", "pdp-sticky");
       bar.setAttribute("data-pdp-sticky", "");
+      var bnotice = el("div", "pdp-notice pdp-sticky__notice");
+      bnotice.hidden = true;
+      noticeEls.push(bnotice);
       var binfo = el("div", "pdp-sticky__info");
       binfo.appendChild(el("div", "pdp-sticky__name", product.title));
-      binfo.appendChild(el("div", "pdp-sticky__price", product.price));
+      var bprice = el("div", "pdp-sticky__price", product.price);
+      priceEls.push(bprice);
+      binfo.appendChild(bprice);
       var bcta = el("button", "btn btn--solid pdp-sticky__cta");
       bcta.type = "button";
       bcta.addEventListener("click", addToBag);
+      bar.appendChild(bnotice);
       bar.appendChild(binfo);
       bar.appendChild(bcta);
       document.body.appendChild(bar);
@@ -166,6 +275,7 @@
       }
     })();
 
+    paintAvailability();
     paintCta();
 
     // Reassurance

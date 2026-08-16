@@ -489,6 +489,47 @@ button { font-family: var(--sans); }
 .availability .dot { width: 8px; height: 8px; }
 .availability.is-sold .dot { background: var(--text-faint); }
 
+/* Kit option chips (one physical piece, several configurations) */
+.pdp-options { margin-bottom: 30px; }
+.pdp-options__label { font-size: 10px; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; }
+.pdp-options__chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip {
+  padding: 13px 24px;
+  background: transparent;
+  border: 1px solid var(--hairline-strong);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color .3s, background .3s, color .3s;
+}
+.chip:hover { border-color: var(--accent-border-strong); color: var(--accent); }
+.chip.is-selected { background: var(--accent); border-color: var(--accent); color: #171310; }
+.chip.is-selected:hover { color: #171310; }
+.chip.is-unavailable { color: var(--text-faint); text-decoration: line-through; }
+.chip.is-unavailable.is-selected { background: var(--disabled); border-color: var(--disabled); color: #171310; }
+
+/* Cart notices (e.g. a kit option already in the bag). Muted crimson on the
+   dark surface; .is-ok switches to the brass accent for confirmations. */
+.pdp-notice {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 12.5px; font-weight: 300; letter-spacing: 0.03em; line-height: 1.55;
+  color: #d2695f;
+  margin: -4px 0 18px;
+}
+.pdp-notice::before {
+  content: "!"; flex: none;
+  width: 16px; height: 16px; margin-top: 1px;
+  border-radius: 50%;
+  background: #d2695f; color: #171310;
+  font-size: 11px; font-weight: 500; line-height: 16px; text-align: center;
+}
+.pdp-notice.is-ok { color: var(--accent); }
+.pdp-notice.is-ok::before { content: "✓"; background: var(--accent); }
+.pdp-notice[hidden] { display: none; }
+
 .cta-row { display: flex; gap: 12px; margin-bottom: 18px; }
 .cta-row .btn--solid { flex: 1; }
 .wishlist-btn { width: 56px; border: 1px solid rgba(232,225,214,0.2); background: transparent; color: var(--text); cursor: pointer; font-size: 15px; }
@@ -519,6 +560,7 @@ button { font-family: var(--sans); }
      header never overlap spatially, so this only matters when the drawer opens. */
   z-index: 45;
   align-items: center;
+  flex-wrap: wrap; /* the notice line, when shown, sits above info + CTA */
   gap: 14px;
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
   background: rgba(16,13,10,0.96);
@@ -536,6 +578,7 @@ button { font-family: var(--sans); }
 }
 .pdp-sticky__price { font-size: 13px; color: var(--text-body); }
 .pdp-sticky__cta { flex: none; padding: 15px 26px; }
+.pdp-sticky__notice { width: 100%; margin: 0; }
 
 /* Editorial strip (PDP) */
 .editorial { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 2px; background: var(--bg); border-top: 1px solid var(--hairline-soft); }

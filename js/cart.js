@@ -39,7 +39,13 @@
     lines.forEach(function (line) {
       var product = all.find(function (p) { return p.slug === line.slug; });
       if (!product) return;
-      total += product.priceAmount || 0;
+      // Kit lines carry the chosen variant (e.g. "Silvertip Knot") — price and
+      // label come from that option, not the product's base (minimum) price.
+      var variant = window.Catalog.isKit(product)
+        ? window.Catalog.findVariant(product, line.variantId)
+        : null;
+      var lineAmount = variant ? variant.priceAmount : (product.priceAmount || 0);
+      total += lineAmount;
       currency = product.currency || currency;
 
       var row = el("div", "cart-line");
@@ -56,7 +62,9 @@
       var nameLink = el("a", "cart-line__name", product.title);
       nameLink.href = "product.html?slug=" + encodeURIComponent(product.slug);
       mid.appendChild(nameLink);
-      mid.appendChild(el("div", "cart-line__type", product.type + " · One of one"));
+      var typeText = product.type + " · One of one";
+      if (variant) typeText = variant.title + " · " + typeText;
+      mid.appendChild(el("div", "cart-line__type", typeText));
       var remove = el("button", "cart-line__remove", "Remove");
       remove.type = "button";
       remove.addEventListener("click", function () {
@@ -66,7 +74,7 @@
       mid.appendChild(remove);
       row.appendChild(mid);
 
-      row.appendChild(el("div", "cart-line__price", money(product.priceAmount, currency)));
+      row.appendChild(el("div", "cart-line__price", money(lineAmount, currency)));
       list.appendChild(row);
     });
 

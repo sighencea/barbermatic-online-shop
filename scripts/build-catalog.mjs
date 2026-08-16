@@ -104,7 +104,18 @@ query Products($query: String!, $mf: [HasMetafieldsIdentifier!]!) {
         totalInventory
         priceRange { minVariantPrice { amount currencyCode } }
         images(first: 8) { edges { node { url altText } } }
-        variants(first: 1) { edges { node { id availableForSale quantityAvailable } } }
+        variants(first: 20) {
+          edges {
+            node {
+              id
+              title
+              availableForSale
+              quantityAvailable
+              price { amount currencyCode }
+              selectedOptions { name value }
+            }
+          }
+        }
         metafields(identifiers: $mf) { key namespace value type }
       }
     }
@@ -147,7 +158,28 @@ function mapProduct(node) {
   const price = node.priceRange.minVariantPrice;
   const amount = Number(price.amount);
   const sym = toCurrencySymbol(price.currencyCode);
-  const variant = node.variants.edges[0]?.node;
+  const variantNodes = node.variants.edges.map((e) => e.node);
+  const variant = variantNodes[0];
+  // "Kit" products (e.g. a one-off brush handle sold Handle Only / with a knot
+  // fitted) carry several Shopify variants that all share the same physical
+  // piece. Expose every variant so the PDP can render option chips and the bag
+  // can enforce "one kit option per piece". Single-variant products keep the
+  // legacy shape (variants omitted from behavior, variantId = only variant).
+  const variants = variantNodes.map((v) => {
+    const vAmount = Number(v.price?.amount ?? amount);
+    const vSym = toCurrencySymbol(v.price?.currencyCode || price.currencyCode);
+    return {
+      id: numericVariantId(v.id),
+      title: v.title,
+      price: `${vSym}${vAmount.toFixed(2)}`,
+      priceAmount: vAmount,
+      available: v.quantityAvailable ?? 0,
+      availableForSale: !!v.availableForSale,
+    };
+  });
+  const isKit = variants.length > 1;
+  // Chip-group label, e.g. "Configuration" — the Shopify option name.
+  const optionName = isKit ? (variant?.selectedOptions?.[0]?.name || "Option") : "";
   const images = node.images.edges.map((e) => ({ src: e.node.url, alt: e.node.altText || node.title }));
   // Generic card spec so razors / pens / accessories read naturally. Prefer the
   // `spec` metafield; fall back to the legacy brush `knot_spec`; else empty
@@ -178,8 +210,11 @@ function mapProduct(node) {
     knot: spec,
     knotSpec: spec,
     available,
-    oneOfOne: available <= 1,
+    oneOfOne: available <= 1 || isKit,
     variantId: numericVariantId(variant?.id),
+    kit: isKit,
+    optionName,
+    variants,
     images,
     placeholders: images.length ? [] : [`${node.title.toLowerCase()} photo`],
     description: node.description || "",
@@ -192,7 +227,15 @@ function cardHtml(p) {
   const media = p.images.length
     ? `<img src="${p.images[0].src}" alt="${p.images[0].alt}">`
     : `<div class="ph">${(p.placeholders[0] || "photo")}</div>`;
-  const avail = p.available > 0 ? `${p.available} available` : "sold";
+  // Kit products: the count is variant *options* on one physical piece, so
+  // "3 available" would overstate stock. Count sellable options instead.
+  let avail;
+  if (p.kit) {
+    const opts = p.variants.filter((v) => v.availableForSale && v.available > 0).length;
+    avail = opts > 0 ? `${opts} option${opts === 1 ? "" : "s"} available` : "sold";
+  } else {
+    avail = p.available > 0 ? `${p.available} available` : "sold";
+  }
   const meta = p.knot
     ? `<span>${p.knot}</span><span class="dot"></span><span>${avail}</span>`
     : `<span>${avail}</span>`;

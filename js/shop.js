@@ -39,7 +39,14 @@
       meta.appendChild(el("span", null, p.knot));
       meta.appendChild(el("span", "dot"));
     }
-    meta.appendChild(el("span", null, p.available > 0 ? p.available + " available" : "sold"));
+    var avail;
+    if (window.Catalog.isKit(p)) {
+      var opts = window.Catalog.sellableOptions(p).length;
+      avail = opts > 0 ? opts + " option" + (opts === 1 ? "" : "s") + " available" : "sold";
+    } else {
+      avail = p.available > 0 ? p.available + " available" : "sold";
+    }
+    meta.appendChild(el("span", null, avail));
     body.appendChild(meta);
 
     a.appendChild(body);
